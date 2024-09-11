@@ -64,6 +64,12 @@ const routes = [
     }
   },
   {
+    path: '/patients/:hospital_id',
+    name: 'PatientDetails',
+    component: () => import('@/views/Patients/Him/PatientDetails.vue'),
+    meta: { requiresAuth: true }
+  },
+  {
     path: '/:pathMatch(.*)*',
     name: 'notFound',
     component: () => import('@/views/NotFound.vue')
