@@ -4,7 +4,8 @@ import { getCurrentUser } from '../utils/staffManagement';
 export const useStaffStore = defineStore('staff', {
   state: () => ({
     currentUser: null,
-    // ... other state properties ...
+    adminHealthcareProfessionals: [],
+    healthInformationManagers: [],
   }),
   
   actions: {
@@ -25,6 +26,18 @@ export const useStaffStore = defineStore('staff', {
     clearStaffData() {
       this.currentUser = null;
       // ... clear other staff-related data ...
+    },
+    
+    addAdminHealthcareProfessional(adminHCP) {
+      this.adminHealthcareProfessionals.push(adminHCP);
+    },
+    
+    removeAdminHealthcareProfessional(staff_id) {
+      this.adminHealthcareProfessionals = this.adminHealthcareProfessionals.filter(hcp => hcp.staff_id !== staff_id);
+    },
+    
+    addHealthInformationManager(him) {
+      this.healthInformationManagers.push(him);
     },
     
     // ... other actions ...

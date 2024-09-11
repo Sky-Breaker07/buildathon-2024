@@ -92,7 +92,7 @@ const toggleSidebar = () => {
 };
 
 const goToOrgSetup = () => {
-  router.push('/org-setup');
+  router.push('/setup');
 };
 
 const logout = () => {

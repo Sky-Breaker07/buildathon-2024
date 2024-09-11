@@ -44,8 +44,20 @@ const changeHCPAdminStatus = (staffId, isAdmin) => {
   return apiClient.patch(`/api/v1/staff/hcp/${staffId}/admin-status`, { isAdmin });
 };
 
-const removeHCP = (staffId) => {
-  return apiClient.delete(`/api/v1/staff/hcp/${staffId}`);
+const removeHCP = async (staffId, token) => {
+  return await apiClient.delete(`/api/v1/staff/hcp/${staffId}`, {
+    headers: {
+      Authorization: `Bearer ${token}`
+    }
+  });
+};
+
+const removeAdminHCP = async (staffId, token) => {
+  return await apiClient.delete(`/api/v1/staff/admin-hcp/${staffId}`, {
+    headers: {
+      Authorization: `Bearer ${token}`
+    }
+  });
 };
 
 const removeHIM = (staffId) => {
@@ -74,7 +86,8 @@ export {
   changeHCPAdminStatus,
   removeHCP,
   removeHIM,
-  getCurrentUser
+  getCurrentUser,
+  removeAdminHCP
 };
 
 
