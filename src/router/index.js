@@ -2,6 +2,8 @@ import { createRouter, createWebHistory } from 'vue-router'
 import { getToken } from '../utils/tokenUtils'
 import { useStaffStore } from '../stores/staff-management'
 import ProtectedLayout from '../layouts/ProtectedLayout.vue'
+import RegisterPatient from '@/views/Patients/RegisterPatient.vue'
+import AllPatients from '@/views/Patients/AllPatients.vue'
 
 const routes = [
   {
@@ -42,6 +44,26 @@ const routes = [
     }
   },
   {
+    path: '/patient/register',
+    name: 'registerPatient',
+    component: RegisterPatient,
+    meta: { 
+      requiresAuth: true, 
+      requiresHIM: true, 
+      layout: ProtectedLayout 
+    }
+  },
+  {
+    path: '/patients',
+    name: 'allPatients',
+    component: AllPatients,
+    meta: { 
+      requiresAuth: true, 
+      requiresHIM: true, 
+      layout: ProtectedLayout 
+    }
+  },
+  {
     path: '/:pathMatch(.*)*',
     name: 'notFound',
     component: () => import('@/views/NotFound.vue')
@@ -57,6 +79,7 @@ router.beforeEach(async (to, from, next) => {
   const token = getToken()
   const requiresAuth = to.matched.some(record => record.meta.requiresAuth)
   const requiresAdminHCP = to.matched.some(record => record.meta.requiresAdminHCP)
+  const requiresHIM = to.matched.some(record => record.meta.requiresHIM)
   const staffStore = useStaffStore()
 
   if (requiresAuth && !token) {
@@ -67,6 +90,8 @@ router.beforeEach(async (to, from, next) => {
         await staffStore.fetchCurrentUser()
         if (requiresAdminHCP && (!staffStore.currentUser.isAdmin || staffStore.currentUser.role !== 'HealthCareProfessional')) {
           next({ name: 'staffDashboard' })
+        } else if (requiresHIM && staffStore.currentUser.role !== 'HealthInformationManager') {
+          next({ name: 'staffDashboard' })
         } else {
           next()
         }
@@ -76,6 +101,8 @@ router.beforeEach(async (to, from, next) => {
       }
     } else {
       if (requiresAdminHCP && (!staffStore.currentUser.isAdmin || staffStore.currentUser.role !== 'HealthCareProfessional')) {
+        next({ name: 'staffDashboard' })
+      } else if (requiresHIM && staffStore.currentUser.role !== 'HealthInformationManager') {
         next({ name: 'staffDashboard' })
       } else {
         next()

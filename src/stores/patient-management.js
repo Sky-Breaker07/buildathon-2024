@@ -8,6 +8,7 @@ export const usePatientStore = defineStore('patient', {
     treatments: [],
     discharges: [],
     evaluations: [],
+    allPatients: [],
   }),
   
   actions: {
@@ -70,6 +71,10 @@ export const usePatientStore = defineStore('patient', {
       this.treatments = [];
       this.discharges = [];
       this.evaluations = [];
+    },
+    
+    setAllPatients(patients) {
+      this.allPatients = patients;
     },
   },
 });

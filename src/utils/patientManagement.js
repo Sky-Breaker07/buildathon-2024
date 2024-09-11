@@ -12,6 +12,10 @@ const getPatient = (hospitalId) => {
   return apiClient.post('/api/v1/patients', { hospital_id: hospitalId });
 };
 
+const getAllPatients = (page = 1, limit = 100) => {
+  return apiClient.get(`/api/v1/patients?page=${page}&limit=${limit}`);
+};
+
 const createAssessment = (assessmentData) => {
   return apiClient.post('/api/v1/patients/assessment', assessmentData);
 };
@@ -45,5 +49,6 @@ export {
   assignPatientToHCP,
   createDischarge,
   createEvaluation,
-  updatePatientInfo
+  updatePatientInfo,
+  getAllPatients
 };

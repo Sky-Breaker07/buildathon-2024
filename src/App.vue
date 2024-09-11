@@ -7,7 +7,6 @@
 <script setup>
 import { computed } from 'vue';
 import { useRoute } from 'vue-router';
-import ProtectedLayout from './layouts/ProtectedLayout.vue';
 
 const route = useRoute();
 
