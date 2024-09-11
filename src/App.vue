@@ -1,10 +1,9 @@
 <template>
-  <div>
-    
-  </div>
+  <SuperAdminSignUp />
 </template>
 
 <script setup>
+import SuperAdminSignUp from './pages/SuperAdminSignUp.vue';
 
 </script>
 
