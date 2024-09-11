@@ -20,8 +20,12 @@ const registerSuperAdmin = (superAdminData) => {
   return apiClient.post('/api/v1/staff/register-super-admin', superAdminData);
 };
 
-const registerHCP = (hcpData) => {
-  return apiClient.post('/api/v1/staff/register-hcp', hcpData);
+const registerHCP = async (hcpData, token) => {
+  return await apiClient.post('/api/v1/staff/register-hcp', hcpData, {
+    headers: {
+      Authorization: `Bearer ${token}`
+    }
+  });
 };
 
 const getAllHCPs = () => {
@@ -60,14 +64,22 @@ const removeAdminHCP = async (staffId, token) => {
   });
 };
 
-const removeHIM = (staffId) => {
-  return apiClient.delete(`/api/v1/staff/him/${staffId}`);
+const removeHIM = async (staffId, token) => {
+  return await apiClient.delete(`/api/v1/staff/him/${staffId}`, {
+    headers: {
+      Authorization: `Bearer ${token}`
+    }
+  });
 };
 
 const getCurrentUser = async () => {
   const response = await apiClient.get('/api/v1/auth/current-user');
   if (response.data.status === "Success" && response.data.data) {
-    return response.data.data;
+    // Ensure that the organization information is included
+    return {
+      ...response.data.data,
+      organization: response.data.data.organization || { name: 'Unknown Organization' }
+    };
   } else {
     console.error("Unexpected response format:", response.data);
     throw new Error("Failed to get current user");

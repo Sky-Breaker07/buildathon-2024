@@ -40,6 +40,10 @@ export const useStaffStore = defineStore('staff', {
       this.healthInformationManagers.push(him);
     },
     
+    removeHealthInformationManager(staff_id) {
+      this.healthInformationManagers = this.healthInformationManagers.filter(him => him.staff_id !== staff_id);
+    },
+    
     // ... other actions ...
   },
 });

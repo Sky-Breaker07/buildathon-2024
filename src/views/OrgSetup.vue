@@ -200,7 +200,7 @@
                     @click="openRemoveModal(staff)"
                     class="px-2 py-1 bg-red-500 text-white rounded"
                   >
-                    Remove Admin
+                    Remove {{ staff.role === "Health Information Manager" ? "HIM" : "Admin" }}
                   </button>
                 </td>
               </tr>
@@ -250,6 +250,7 @@
       </teleport>
     </div>
   </div>
+  <LoadingModal ref="loadingModal" />
 </template>
 
 <script setup>
@@ -262,13 +263,16 @@ import {
   getAdminHCPs,
   getAllHIMs,
   removeAdminHCP,
+  removeHIM,
 } from "../utils/staffManagement";
 import { useToast } from "vue-toastification";
 import { getToken } from '../utils/tokenUtils';
+import LoadingModal from '../components/LoadingModal.vue';
 
 const toast = useToast();
 const router = useRouter();
 const staffStore = useStaffStore();
+const loadingModal = ref(null);
 
 const professions = ref([]);
 const newProfession = ref("");
@@ -309,7 +313,12 @@ const capitalizeFirstLetter = (string) => {
 
 const registerHeadOfProfession = async () => {
   try {
-    const response = await registerAdminHCP(headForm.value);
+    loadingModal.value.show();
+    const token = getToken();
+    if (!token) {
+      throw new Error('No authentication token found');
+    }
+    const response = await registerAdminHCP(headForm.value, token);
     if (
       response.data &&
       response.data.status === "Success" &&
@@ -325,22 +334,38 @@ const registerHeadOfProfession = async () => {
       resetHeadForm();
     } else {
       console.error("Unexpected response format:", response);
+      toast.error("Failed to register Head of Profession. Please try again.");
     }
   } catch (error) {
     console.error("Error registering Head of Profession:", error);
+    toast.error("Failed to register Head of Profession. Please try again.");
+  } finally {
+    loadingModal.value.hide();
   }
 };
 
 const registerHealthInformationManager = async () => {
   try {
-    const response = await registerHIM(himForm.value);
-    staffStore.addHealthInformationManager(
-      response.data.healthInformationManager
-    );
-    await fetchRegisteredStaff();
-    resetHIMForm();
+    loadingModal.value.show();
+    const token = getToken();
+    if (!token) {
+      throw new Error('No authentication token found');
+    }
+    const response = await registerHIM(himForm.value, token);
+    if (response.data && response.data.status === "Success" && response.data.data.healthInformationManager) {
+      toast.success(`${himForm.value.firstName} ${himForm.value.lastName} registered successfully as Health Information Manager`);
+      staffStore.addHealthInformationManager(response.data.data.healthInformationManager);
+      await fetchRegisteredStaff();
+      resetHIMForm();
+    } else {
+      console.error("Unexpected response format:", response);
+      toast.error("Failed to register Health Information Manager. Please try again.");
+    }
   } catch (error) {
     console.error("Error registering Health Information Manager:", error);
+    toast.error("Failed to register Health Information Manager. Please try again.");
+  } finally {
+    loadingModal.value.hide();
   }
 };
 
@@ -363,6 +388,7 @@ const resetHIMForm = () => {
 
 const fetchRegisteredStaff = async () => {
   try {
+    loadingModal.value.show();
     const [adminHCPs, hims] = await Promise.all([getAdminHCPs(), getAllHIMs()]);
     registeredStaff.value = [
       ...(adminHCPs.data?.data?.adminHealthcareProfessionals || []).map(
@@ -378,6 +404,9 @@ const fetchRegisteredStaff = async () => {
     ];
   } catch (error) {
     console.error("Error fetching registered staff:", error);
+    toast.error("Failed to fetch registered staff. Please try again.");
+  } finally {
+    loadingModal.value.hide();
   }
 };
 
@@ -400,16 +429,24 @@ const closeRemoveModal = () => {
 const removeAdmin = async () => {
   if (confirmationInput.value === staffToRemove.value.staff_id) {
     try {
+      loadingModal.value.show();
       const token = getToken();
-      const staffName = staffToRemove.value.name; // Store the name before removal
-      await removeAdminHCP(staffToRemove.value.staff_id, token);
-      staffStore.removeAdminHealthcareProfessional(staffToRemove.value.staff_id);
+      const staffName = staffToRemove.value.name;
+      if (staffToRemove.value.role === "Health Information Manager") {
+        await removeHIM(staffToRemove.value.staff_id, token);
+        staffStore.removeHealthInformationManager(staffToRemove.value.staff_id);
+      } else {
+        await removeAdminHCP(staffToRemove.value.staff_id, token);
+        staffStore.removeAdminHealthcareProfessional(staffToRemove.value.staff_id);
+      }
       await fetchRegisteredStaff();
       closeRemoveModal();
-      toast.success(`${staffName} has been removed as an admin.`);
+      toast.success(`${staffName} has been removed successfully.`);
     } catch (error) {
-      console.error("Error removing admin:", error);
-      toast.error("Failed to remove admin. Please try again.");
+      console.error("Error removing staff:", error);
+      toast.error("Failed to remove staff. Please try again.");
+    } finally {
+      loadingModal.value.hide();
     }
   }
 };

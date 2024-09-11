@@ -1,6 +1,7 @@
 import { createRouter, createWebHistory } from 'vue-router'
 import { getToken } from '../utils/tokenUtils'
 import { useStaffStore } from '../stores/staff-management'
+import ProtectedLayout from '../layouts/ProtectedLayout.vue'
 
 const routes = [
   {
@@ -22,13 +23,23 @@ const routes = [
     path: '/dashboard',
     name: 'staffDashboard',
     component: () => import('@/views/StaffDashboard.vue'),
-    meta: { requiresAuth: true }
+    meta: { requiresAuth: true, layout: ProtectedLayout }
   },
   {
     path: '/setup',
     name: 'orgSetup',
     component: () => import('@/views/OrgSetup.vue'),
-    meta: { requiresAuth: true, requiresSuperAdmin: true }
+    meta: { requiresAuth: true, requiresSuperAdmin: true, layout: ProtectedLayout }
+  },
+  {
+    path: '/admin-setup',
+    name: 'adminSetup',
+    component: () => import('@/views/AdminSetup.vue'),
+    meta: { 
+      requiresAuth: true, 
+      requiresAdminHCP: true, 
+      layout: ProtectedLayout 
+    }
   },
   {
     path: '/:pathMatch(.*)*',
@@ -45,24 +56,30 @@ const router = createRouter({
 router.beforeEach(async (to, from, next) => {
   const token = getToken()
   const requiresAuth = to.matched.some(record => record.meta.requiresAuth)
+  const requiresAdminHCP = to.matched.some(record => record.meta.requiresAdminHCP)
   const staffStore = useStaffStore()
 
   if (requiresAuth && !token) {
-    // Redirect to login if authentication is required but no token is present
     next({ name: 'login', query: { redirect: to.fullPath } })
   } else if (requiresAuth) {
-    // If the route requires auth and we have a token, ensure we have the current user
     if (!staffStore.currentUser) {
       try {
         await staffStore.fetchCurrentUser()
-        next()
+        if (requiresAdminHCP && (!staffStore.currentUser.isAdmin || staffStore.currentUser.role !== 'HealthCareProfessional')) {
+          next({ name: 'staffDashboard' })
+        } else {
+          next()
+        }
       } catch (error) {
         console.error('Failed to fetch current user:', error)
-        // If fetching the user fails, redirect to login
         next({ name: 'login', query: { redirect: to.fullPath } })
       }
     } else {
-      next()
+      if (requiresAdminHCP && (!staffStore.currentUser.isAdmin || staffStore.currentUser.role !== 'HealthCareProfessional')) {
+        next({ name: 'staffDashboard' })
+      } else {
+        next()
+      }
     }
   } else {
     next()

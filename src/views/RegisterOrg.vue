@@ -55,10 +55,13 @@
     staffId.value = data.superAdmin.staff_id;
   };
   
-  const copyStaffId = () => {
-    staffIdInput.value.select();
-    document.execCommand('copy');
-    alert('Staff ID copied to clipboard!');
+  const copyStaffId = async () => {
+    try {
+      await navigator.clipboard.writeText(staffId.value);
+      alert('Staff ID copied to clipboard!');
+    } catch (err) {
+      console.error('Failed to copy: ', err);
+    }
   };
   
   const goToLogin = () => {
