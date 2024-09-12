@@ -727,6 +727,102 @@ Note: This action can only be performed by a Super Admin. Attempting to access t
   }
   ```
 
+### Transfer Patient
+
+- **URL:** `/api/v1/patients/transfer-patient`
+- **Method:** `POST`
+- **Auth Required:** Yes
+- **Controller:** `transferPatient`
+- **Request Body:**
+  ```json
+  {
+    "hospital_id": "string",
+    "receiverStaffId": "string"
+  }
+  ```
+- **Response:**
+  ```json
+  {
+    "status": "success",
+    "statusCode": 200,
+    "message": "Patient transferred successfully",
+    "data": null
+  }
+  ```
+
+### Accept Patient
+
+- **URL:** `/api/v1/patients/accept-patient`
+- **Method:** `POST`
+- **Auth Required:** Yes
+- **Controller:** `acceptPatient`
+- **Request Body:**
+  ```json
+  {
+    "hospital_id": "string",
+    "senderStaffId": "string"
+  }
+  ```
+- **Response:**
+  ```json
+  {
+    "status": "success",
+    "statusCode": 200,
+    "message": "Patient accepted successfully",
+    "data": null
+  }
+  ```
+
+### Reject Patient
+
+- **URL:** `/api/v1/patients/reject-patient`
+- **Method:** `POST`
+- **Auth Required:** Yes
+- **Controller:** `rejectPatient`
+- **Request Body:**
+  ```json
+  {
+    "hospital_id": "string",
+    "senderStaffId": "string"
+  }
+  ```
+- **Response:**
+  ```json
+  {
+    "status": "success",
+    "statusCode": 200,
+    "message": "Patient rejected successfully",
+    "data": null
+  }
+  ```
+
+### Get Admin Jurisdiction Patients
+
+- **URL:** `/api/v1/patients/admin-jurisdiction`
+- **Method:** `GET`
+- **Auth Required:** Yes
+- **Controller:** `getAdminJurisdictionPatients`
+- **Response:**
+  ```json
+  {
+    "status": "success",
+    "statusCode": 200,
+    "message": "Patients under admin's jurisdiction retrieved successfully",
+    "data": {
+      "assignedToAdmin": [
+        // Array of patients assigned to the admin
+      ],
+      "assignedToOtherHCPs": [
+        // Array of patients assigned to other HCPs of the same profession
+      ],
+      "receivedPatients": [
+        // Array of patients received by the admin
+      ]
+    }
+  }
+  ```
+
+
 ## Assessment Templates
 
 ### Create Assessment Template

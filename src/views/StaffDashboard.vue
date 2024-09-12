@@ -20,7 +20,7 @@
           <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"></path>
           </svg>
-          <span v-if="!sidebarCollapsed">Manage Healthcare Professionals</span>
+          <span v-if="!sidebarCollapsed">Register/Remove {{ adminHCPProfessionPlural }}</span>
         </a>
         <!-- New navigation item for Organization Setup -->
         <a v-if="isSuperAdmin" href="#" @click.prevent="goToOrgSetup" class="flex items-center py-2 px-4 text-gray-300 hover:bg-indigo-700">
@@ -28,6 +28,19 @@
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"></path>
           </svg>
           <span v-if="!sidebarCollapsed">Organization Setup</span>
+        </a>
+        <!-- New navigation items for HIM -->
+        <a v-if="isHIM" href="#" @click.prevent="goToRegisterPatient" class="flex items-center py-2 px-4 text-gray-300 hover:bg-indigo-700">
+          <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M18 9v3m0 0v3m0-3h3m-3 0h-3m-2-5a4 4 0 11-8 0 4 4 0 018 0zM3 20a6 6 0 0112 0v1H3v-1z"></path>
+          </svg>
+          <span v-if="!sidebarCollapsed">Register Patient</span>
+        </a>
+        <a v-if="isHIM" href="#" @click.prevent="goToAllPatients" class="flex items-center py-2 px-4 text-gray-300 hover:bg-indigo-700">
+          <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"></path>
+          </svg>
+          <span v-if="!sidebarCollapsed">All Patients</span>
         </a>
         <a href="#" @click="logout" class="flex items-center py-2 px-4 text-gray-300 hover:bg-indigo-700">
           <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
@@ -106,6 +119,25 @@ const isSuperAdmin = computed(() =>
   currentUser.value?.role === 'SuperAdmin'
 );
 
+const isHIM = computed(() => 
+  currentUser.value?.role === 'HealthInformationManager'
+);
+
+const adminHCPProfessionPlural = computed(() => {
+  if (isAdminHCP.value && currentUser.value?.profession) {
+    const profession = currentUser.value.profession;
+    // Handle special cases for plural forms
+    if (profession.endsWith('y')) {
+      return profession.slice(0, -1) + 'ists';
+    } else if (profession.endsWith('s')) {
+      return profession;
+    } else {
+      return profession + 's';
+    }
+  }
+  return '';
+});
+
 const userTitle = computed(() => {
   if (!currentUser.value) return '';
   if (currentUser.value.role === 'SuperAdmin') return 'Chief Executive Officer';
@@ -147,6 +179,38 @@ const goToOrgSetup = async () => {
   } catch (error) {
     console.error('Error navigating to Organization Setup:', error);
     toast.error('Failed to navigate to Organization Setup. Please try again.');
+  } finally {
+    if (loadingModal.value) {
+      loadingModal.value.hide();
+    }
+  }
+};
+
+const goToRegisterPatient = async () => {
+  try {
+    if (loadingModal.value) {
+      loadingModal.value.show();
+    }
+    await router.push('/patient/register');
+  } catch (error) {
+    console.error('Error navigating to Register Patient:', error);
+    toast.error('Failed to navigate to Register Patient. Please try again.');
+  } finally {
+    if (loadingModal.value) {
+      loadingModal.value.hide();
+    }
+  }
+};
+
+const goToAllPatients = async () => {
+  try {
+    if (loadingModal.value) {
+      loadingModal.value.show();
+    }
+    await router.push('/patients');
+  } catch (error) {
+    console.error('Error navigating to All Patients:', error);
+    toast.error('Failed to navigate to All Patients. Please try again.');
   } finally {
     if (loadingModal.value) {
       loadingModal.value.hide();

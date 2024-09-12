@@ -2,8 +2,8 @@ import { createRouter, createWebHistory } from 'vue-router'
 import { getToken } from '../utils/tokenUtils'
 import { useStaffStore } from '../stores/staff-management'
 import ProtectedLayout from '../layouts/ProtectedLayout.vue'
-import RegisterPatient from '@/views/Patients/RegisterPatient.vue'
-import AllPatients from '@/views/Patients/AllPatients.vue'
+import RegisterPatient from '@/views/Patients/Him/RegisterPatient.vue'
+import AllPatients from '@/views/Patients/Him/AllPatients.vue'
 
 const routes = [
   {
