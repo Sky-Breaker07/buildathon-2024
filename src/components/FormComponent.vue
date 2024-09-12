@@ -74,9 +74,9 @@ button{
 
 }
 
-.form_fields{
+/*.form_fields{
 
-}
+}*/
 
 .form_fields h2{
     font-family: "inter" sans-serif;

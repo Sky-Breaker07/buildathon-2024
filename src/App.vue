@@ -1,13 +1,18 @@
 <template>
-  <SuperAdminSignUp />
+  <component :is="layout">
+    <router-view />
+  </component>
 </template>
 
 <script setup>
-import SuperAdminSignUp from './pages/SuperAdminSignUp.vue';
+import { computed } from 'vue';
+import { useRoute } from 'vue-router';
 
+const route = useRoute();
+
+const layout = computed(() => {
+  return route.meta.layout || 'div';
+});
 </script>
 
-<style scoped>
-
-
-</style>
+<style scoped></style>
