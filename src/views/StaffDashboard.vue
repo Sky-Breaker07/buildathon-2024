@@ -22,6 +22,13 @@
           </svg>
           <span v-if="!sidebarCollapsed">Manage Healthcare Professionals</span>
         </a>
+        <!-- New navigation item for Organization Setup -->
+        <a v-if="isSuperAdmin" href="#" @click.prevent="goToOrgSetup" class="flex items-center py-2 px-4 text-gray-300 hover:bg-indigo-700">
+          <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"></path>
+          </svg>
+          <span v-if="!sidebarCollapsed">Organization Setup</span>
+        </a>
         <a href="#" @click="logout" class="flex items-center py-2 px-4 text-gray-300 hover:bg-indigo-700">
           <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"></path>
@@ -95,6 +102,10 @@ const isAdminHCP = computed(() =>
   currentUser.value?.role === 'HealthCareProfessional' && currentUser.value?.isAdmin
 );
 
+const isSuperAdmin = computed(() => 
+  currentUser.value?.role === 'SuperAdmin'
+);
+
 const userTitle = computed(() => {
   if (!currentUser.value) return '';
   if (currentUser.value.role === 'SuperAdmin') return 'Chief Executive Officer';
@@ -120,6 +131,22 @@ const goToAdminSetup = async () => {
   } catch (error) {
     console.error('Error navigating to Admin Setup:', error);
     toast.error('Failed to navigate to Admin Setup. Please try again.');
+  } finally {
+    if (loadingModal.value) {
+      loadingModal.value.hide();
+    }
+  }
+};
+
+const goToOrgSetup = async () => {
+  try {
+    if (loadingModal.value) {
+      loadingModal.value.show();
+    }
+    await router.push('/setup');
+  } catch (error) {
+    console.error('Error navigating to Organization Setup:', error);
+    toast.error('Failed to navigate to Organization Setup. Please try again.');
   } finally {
     if (loadingModal.value) {
       loadingModal.value.hide();

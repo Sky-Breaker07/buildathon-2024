@@ -86,6 +86,7 @@ router.beforeEach(async (to, from, next) => {
   const requiresAuth = to.matched.some(record => record.meta.requiresAuth)
   const requiresAdminHCP = to.matched.some(record => record.meta.requiresAdminHCP)
   const requiresHIM = to.matched.some(record => record.meta.requiresHIM)
+  const requiresSuperAdmin = to.matched.some(record => record.meta.requiresSuperAdmin)
   const staffStore = useStaffStore()
 
   if (requiresAuth && !token) {
@@ -98,6 +99,8 @@ router.beforeEach(async (to, from, next) => {
           next({ name: 'staffDashboard' })
         } else if (requiresHIM && staffStore.currentUser.role !== 'HealthInformationManager') {
           next({ name: 'staffDashboard' })
+        } else if (requiresSuperAdmin && staffStore.currentUser.role !== 'SuperAdmin') {
+          next({ name: 'staffDashboard' })
         } else {
           next()
         }
@@ -109,6 +112,8 @@ router.beforeEach(async (to, from, next) => {
       if (requiresAdminHCP && (!staffStore.currentUser.isAdmin || staffStore.currentUser.role !== 'HealthCareProfessional')) {
         next({ name: 'staffDashboard' })
       } else if (requiresHIM && staffStore.currentUser.role !== 'HealthInformationManager') {
+        next({ name: 'staffDashboard' })
+      } else if (requiresSuperAdmin && staffStore.currentUser.role !== 'SuperAdmin') {
         next({ name: 'staffDashboard' })
       } else {
         next()
