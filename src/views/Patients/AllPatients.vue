@@ -40,6 +40,7 @@
               <span v-else>↓</span>
             </button>
           </th>
+          <th class="p-2 border">Actions</th>
         </tr>
       </thead>
       <tbody>
@@ -47,6 +48,14 @@
           <td class="p-2 border">{{ patient.biodata.name }}</td>
           <td class="p-2 border">{{ patient.hospital_record.hospital_id }}</td>
           <td class="p-2 border">{{ formatDate(patient.biodata.createdAt) }}</td>
+          <td class="p-2 border">
+            <router-link 
+              :to="{ name: 'PatientDetails', params: { hospital_id: patient.hospital_record.hospital_id }}"
+              class="text-blue-500 hover:text-blue-700"
+            >
+              View Details
+            </router-link>
+          </td>
         </tr>
       </tbody>
     </table>
