@@ -70,6 +70,42 @@ const routes = [
     meta: { requiresAuth: true }
   },
   {
+    path: '/hcp/all-patients',
+    name: 'AllPatientsHCP',
+    component: () => import('@/views/Patients/HCP/AllPatients.vue'),
+    meta: { 
+      requiresAuth: true, 
+      requiresAdminHCP: true, 
+      layout: ProtectedLayout 
+    }
+  },
+  {
+    path: '/hcp/patient/:hospital_id',
+    name: 'PatientDetailsHCP',
+    component: () => import('@/views/Patients/HCP/PatientDetails.vue'),
+    meta: { requiresAuth: true, requiresAdminHCP: true }
+  },
+  {
+    path: '/hcp/assigned-patients',
+    name: 'AssignedPatients',
+    component: () => import('@/views/Patients/HCP/AssignedPatients.vue'),
+    meta: { 
+      requiresAuth: true, 
+      requiresHCP: true, 
+      layout: ProtectedLayout 
+    }
+  },
+  {
+    path: '/hcp/assigned/:hospital_id',
+    name: 'AssignedPatientDetails',
+    component: () => import('@/views/Patients/HCP/AssignedPatientDetails.vue'),
+    meta: { 
+      requiresAuth: true, 
+      requiresHCP: true, 
+      layout: ProtectedLayout 
+    }
+  },
+  {
     path: '/:pathMatch(.*)*',
     name: 'notFound',
     component: () => import('@/views/NotFound.vue')
@@ -85,8 +121,6 @@ router.beforeEach(async (to, from, next) => {
   const token = getToken()
   const requiresAuth = to.matched.some(record => record.meta.requiresAuth)
   const requiresAdminHCP = to.matched.some(record => record.meta.requiresAdminHCP)
-  const requiresHIM = to.matched.some(record => record.meta.requiresHIM)
-  const requiresSuperAdmin = to.matched.some(record => record.meta.requiresSuperAdmin)
   const staffStore = useStaffStore()
 
   if (requiresAuth && !token) {
@@ -97,10 +131,6 @@ router.beforeEach(async (to, from, next) => {
         await staffStore.fetchCurrentUser()
         if (requiresAdminHCP && (!staffStore.currentUser.isAdmin || staffStore.currentUser.role !== 'HealthCareProfessional')) {
           next({ name: 'staffDashboard' })
-        } else if (requiresHIM && staffStore.currentUser.role !== 'HealthInformationManager') {
-          next({ name: 'staffDashboard' })
-        } else if (requiresSuperAdmin && staffStore.currentUser.role !== 'SuperAdmin') {
-          next({ name: 'staffDashboard' })
         } else {
           next()
         }
@@ -110,10 +140,6 @@ router.beforeEach(async (to, from, next) => {
       }
     } else {
       if (requiresAdminHCP && (!staffStore.currentUser.isAdmin || staffStore.currentUser.role !== 'HealthCareProfessional')) {
-        next({ name: 'staffDashboard' })
-      } else if (requiresHIM && staffStore.currentUser.role !== 'HealthInformationManager') {
-        next({ name: 'staffDashboard' })
-      } else if (requiresSuperAdmin && staffStore.currentUser.role !== 'SuperAdmin') {
         next({ name: 'staffDashboard' })
       } else {
         next()

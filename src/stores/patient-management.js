@@ -8,7 +8,12 @@ export const usePatientStore = defineStore('patient', {
     treatments: [],
     discharges: [],
     evaluations: [],
-    allPatients: [],
+    allPatients: {
+      assignedToAdmin: [],
+      assignedToOtherHCPs: [],
+      receivedPatients: [],
+    },
+    assignedPatients: [], // New state for assigned patients
   }),
   
   actions: {
@@ -75,6 +80,22 @@ export const usePatientStore = defineStore('patient', {
     
     setAllPatients(patients) {
       this.allPatients = patients;
+    },
+    
+    removePatient(hospitalId) {
+      this.allPatients.receivedPatients = this.allPatients.receivedPatients.filter(
+        patient => patient.hospital_id !== hospitalId
+      );
+    },
+    
+    removePatientFromReceived(hospitalId) {
+      this.allPatients.receivedPatients = this.allPatients.receivedPatients.filter(
+        patient => patient.hospital_id !== hospitalId
+      );
+    },
+    
+    setAssignedPatients(patients) {
+      this.assignedPatients = patients || [];
     },
   },
 });
