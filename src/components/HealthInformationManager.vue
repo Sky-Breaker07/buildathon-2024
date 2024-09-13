@@ -1,8 +1,5 @@
 <template>
-	<form
-		@submit.prevent="handleSubmit"
-		class="px-[2.175rem]"
-	>
+	<div>
 		<div class="bg-purplish rounded-md py-[1.1875rem] px-[2.5625rem]">
 			<header
 				class="border-b border-solid border-grayish pb-2 flex items-center justify-between"
@@ -89,9 +86,8 @@
 							v-model="patientData.sex"
 						>
 							<option value="0">Select Sex</option>
-							<option value="male">Male</option>
-							<option value="female">Female</option>
-							<option value="other">Other</option>
+							<option value="1">Male</option>
+							<option value="2">Female</option>
 						</select>
 					</div>
 
@@ -122,10 +118,10 @@
 							v-model="patientData.marital_status"
 						>
 							<option value="0">Select Marital Status</option>
-							<option value="single">Single</option>
-							<option value="married">Married</option>
-							<option value="divorced">Divorced</option>
-							<option value="widowed">Widowed</option>
+							<option value="1">Single</option>
+							<option value="2">Married</option>
+							<option value="3">Divorced</option>
+							<option value="4">Widowed</option>
 						</select>
 					</div>
 
@@ -223,91 +219,7 @@
 				</div>
 			</div>
 		</div>
-
-		<div>
-			<button
-				type="submit"
-				:disabled="isSubmitting"
-				class="mt-10 w-full flex justify-center py-4 border border-transparent rounded-md shadow-sm text-sm font-medium font-poppins text-clrWhite bg-clrBlue hover:indigo-600 transition duration-150 ease-in-out disabled:opacity-50"
-			>
-				<span
-					v-if="isSubmitting"
-					class="flex items-center"
-				>
-					<svg
-						class="animate-spin -ml-1 mr-3 h-5 w-5 text-white"
-						xmlns="http://www.w3.org/2000/svg"
-						fill="none"
-						viewBox="0 0 24 24"
-					>
-						<circle
-							class="opacity-25"
-							cx="12"
-							cy="12"
-							r="10"
-							stroke="currentColor"
-							stroke-width="4"
-						></circle>
-						<path
-							class="opacity-75"
-							fill="currentColor"
-							d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
-						></path>
-					</svg>
-					Registering...
-				</span>
-				<span v-else>Register Patient</span>
-			</button>
-		</div>
-	</form>
-	<LoadingModal ref="loadingModal" />
+	</div>
 </template>
 
-<script setup>
-	import { ref } from 'vue';
-	import { useRouter } from 'vue-router';
-	import { usePatientStore } from '@/stores/patient-management';
-	import { registerPatient } from '@/utils/patientManagement';
-	import LoadingModal from '@/components/LoadingModal.vue';
-	import { useToast } from 'vue-toastification';
-
-	const router = useRouter();
-	const patientStore = usePatientStore();
-	const loadingModal = ref(null);
-	const toast = useToast();
-
-	const patientData = ref({
-		name: '',
-		age: null,
-		sex: '',
-		tribe: '',
-		religion: '',
-		occupation: '',
-		marital_status: '',
-		address: '',
-	});
-
-	const isSubmitting = ref(false);
-
-	const handleSubmit = async () => {
-		if (isSubmitting.value) return;
-
-		try {
-			isSubmitting.value = true;
-			loadingModal.value.show();
-			const response = await registerPatient(patientData.value);
-			patientStore.setCurrentPatient(response.data.hospitalRecord);
-			loadingModal.value.hide();
-			toast.success('Patient registered successfully!');
-			setTimeout(() => {
-				router.push('/patients');
-			}, 2000);
-		} catch (error) {
-			console.error('Error registering patient:', error);
-			loadingModal.value.hide();
-			toast.error('Failed to register patient. Please try again.');
-		} finally {
-			isSubmitting.value = false;
-		}
-	};
-</script>
+<script setup></script>

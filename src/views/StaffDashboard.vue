@@ -1,174 +1,13 @@
 <template>
 	<div
 		v-if="currentUser"
-		class="flex h-screen bg-gray-100"
+		class="px-[2.175rem]"
 	>
-		<!-- Sidebar -->
-		<div
-			:class="{ 'w-64': !sidebarCollapsed, 'w-16': sidebarCollapsed }"
-			class="bg-indigo-800 text-white transition-all duration-300 ease-in-out"
-		>
-			<div class="p-4">
-				<button
-					@click="toggleSidebar"
-					class="text-white focus:outline-none"
-				>
-					<svg
-						class="w-6 h-6"
-						fill="none"
-						stroke="currentColor"
-						viewBox="0 0 24 24"
-						xmlns="http://www.w3.org/2000/svg"
-					>
-						<path
-							stroke-linecap="round"
-							stroke-linejoin="round"
-							stroke-width="2"
-							d="M4 6h16M4 12h16M4 18h16"
-						></path>
-					</svg>
-				</button>
-			</div>
-			<nav class="mt-5">
-				<a
-					href="#"
-					class="flex items-center py-2 px-4 text-gray-300 hover:bg-indigo-700"
-				>
-					<svg
-						class="w-5 h-5 mr-2"
-						fill="none"
-						stroke="currentColor"
-						viewBox="0 0 24 24"
-						xmlns="http://www.w3.org/2000/svg"
-					>
-						<path
-							stroke-linecap="round"
-							stroke-linejoin="round"
-							stroke-width="2"
-							d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"
-						></path>
-					</svg>
-					<span v-if="!sidebarCollapsed">Dashboard</span>
-				</a>
-				<a
-					v-if="isAdminHCP"
-					href="#"
-					@click.prevent="goToAdminSetup"
-					class="flex items-center py-2 px-4 text-gray-300 hover:bg-indigo-700"
-				>
-					<svg
-						class="w-5 h-5 mr-2"
-						fill="none"
-						stroke="currentColor"
-						viewBox="0 0 24 24"
-						xmlns="http://www.w3.org/2000/svg"
-					>
-						<path
-							stroke-linecap="round"
-							stroke-linejoin="round"
-							stroke-width="2"
-							d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"
-						></path>
-					</svg>
-					<span v-if="!sidebarCollapsed"
-						>Register/Remove {{ adminHCPProfessionPlural }}</span
-					>
-				</a>
-				<!-- New navigation item for Organization Setup -->
-				<a
-					v-if="isSuperAdmin"
-					href="#"
-					@click.prevent="goToOrgSetup"
-					class="flex items-center py-2 px-4 text-gray-300 hover:bg-indigo-700"
-				>
-					<svg
-						class="w-5 h-5 mr-2"
-						fill="none"
-						stroke="currentColor"
-						viewBox="0 0 24 24"
-						xmlns="http://www.w3.org/2000/svg"
-					>
-						<path
-							stroke-linecap="round"
-							stroke-linejoin="round"
-							stroke-width="2"
-							d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"
-						></path>
-					</svg>
-					<span v-if="!sidebarCollapsed">Organization Setup</span>
-				</a>
-				<!-- New navigation items for HIM -->
-				<a
-					v-if="isHIM"
-					href="#"
-					@click.prevent="goToRegisterPatient"
-					class="flex items-center py-2 px-4 text-gray-300 hover:bg-indigo-700"
-				>
-					<svg
-						class="w-5 h-5 mr-2"
-						fill="none"
-						stroke="currentColor"
-						viewBox="0 0 24 24"
-						xmlns="http://www.w3.org/2000/svg"
-					>
-						<path
-							stroke-linecap="round"
-							stroke-linejoin="round"
-							stroke-width="2"
-							d="M18 9v3m0 0v3m0-3h3m-3 0h-3m-2-5a4 4 0 11-8 0 4 4 0 018 0zM3 20a6 6 0 0112 0v1H3v-1z"
-						></path>
-					</svg>
-					<span v-if="!sidebarCollapsed">Register Patient</span>
-				</a>
-				<a
-					v-if="isHIM"
-					href="#"
-					@click.prevent="goToAllPatients"
-					class="flex items-center py-2 px-4 text-gray-300 hover:bg-indigo-700"
-				>
-					<svg
-						class="w-5 h-5 mr-2"
-						fill="none"
-						stroke="currentColor"
-						viewBox="0 0 24 24"
-						xmlns="http://www.w3.org/2000/svg"
-					>
-						<path
-							stroke-linecap="round"
-							stroke-linejoin="round"
-							stroke-width="2"
-							d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"
-						></path>
-					</svg>
-					<span v-if="!sidebarCollapsed">All Patients</span>
-				</a>
-				<a
-					href="#"
-					@click="logout"
-					class="flex items-center py-2 px-4 text-gray-300 hover:bg-indigo-700"
-				>
-					<svg
-						class="w-5 h-5 mr-2"
-						fill="none"
-						stroke="currentColor"
-						viewBox="0 0 24 24"
-						xmlns="http://www.w3.org/2000/svg"
-					>
-						<path
-							stroke-linecap="round"
-							stroke-linejoin="round"
-							stroke-width="2"
-							d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"
-						></path>
-					</svg>
-					<span v-if="!sidebarCollapsed">Logout</span>
-				</a>
-			</nav>
+		<StaffDashBoardHeader />
+		<div v-if="isHIM">
+			<HealthInformationManager />
 		</div>
-
-		<!-- Main content -->
 		<div class="flex-1 overflow-x-hidden overflow-y-auto">
-			<StaffDashBoardHeader />
 			<div class="container mx-auto px-6 py-8">
 				<h3 class="text-3xl font-medium text-gray-700">
 					Welcome, {{ currentUser.firstName }}
@@ -263,6 +102,7 @@
 	import LoadingModal from '../components/LoadingModal.vue';
 	import { useToast } from 'vue-toastification';
 	import StaffDashBoardHeader from '../components/StaffDashBoardHeader.vue';
+	import HealthInformationManager from '../components/HealthInformationManager.vue';
 	const router = useRouter();
 	const staffStore = useStaffStore();
 	const { currentUser } = storeToRefs(staffStore);

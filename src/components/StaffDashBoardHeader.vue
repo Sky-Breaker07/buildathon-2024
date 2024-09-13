@@ -1,5 +1,5 @@
 <template>
-	<div class="flex flex-col gap-2 mb-6">
+	<div class="flex flex-col gap-2 mb-6 px-[2.175rem]">
 		<div class="flex gap-6 items-baseline">
 			<h2 class="font-afacad font-semibold text-[2.5rem] text-clrBlack">
 				Welcome, {{ staffName }}
