@@ -5,6 +5,7 @@ import ProtectedLayout from "../layouts/ProtectedLayout.vue";
 import RegisterPatient from "@/views/Patients/Him/RegisterPatient.vue";
 import AllPatients from "@/views/Patients/Him/AllPatients.vue";
 
+
 const routes = [
   {
     path: "/",
@@ -118,6 +119,21 @@ const routes = [
       requiresHCP: true,
       layout: ProtectedLayout,
     },
+  },
+  {
+    path: "/hcp/assigned/:hospital_id/assessments",
+    name: "Assessment",
+    component: () => import("@/views/Patients/HCP/PatientAssessment.vue"),
+    meta: {
+      requiresAuth: true,
+      requiresHCP: true,
+      layout: ProtectedLayout,
+    },
+  },
+  {
+    path: '/hcp/assessment-templates',
+    name: 'AssessmentTemplate',
+    component: () => import ('@/views/Patients/HCP/AssessmentTemplate.vue')
   },
   {
     path: "/:pathMatch(.*)*",

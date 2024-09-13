@@ -37,7 +37,7 @@
               <td class="border p-2">{{ patient.name }}</td>
               <td class="border p-2">{{ patient.hospital_id }}</td>
               <td class="border p-2">
-                <router-link :to="`/hcp/patient/${patient.hospital_id}`" class="text-blue-500 hover:underline">View Details</router-link>
+                <router-link :to="`/hcp/assigned/${patient.hospital_id}`" class="text-blue-500 hover:underline">View Details</router-link>
               </td>
             </tr>
           </tbody>
