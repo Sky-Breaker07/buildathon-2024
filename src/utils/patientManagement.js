@@ -14,12 +14,16 @@ const getPatient = (hospitalId) => {
   return apiClient.post("/api/v1/patients", { hospital_id: hospitalId });
 };
 
-const getAllPatients = (page = 1, limit = 100) => {
+const getAllPatients = (page = 1, limit = 200) => {
   return apiClient.get(`/api/v1/patients?page=${page}&limit=${limit}`);
 };
 
-const createAssessment = (assessmentData) => {
-  return apiClient.post("/api/v1/patients/assessment", assessmentData);
+const createAssessment = (template_id, assessment_data, hospital_id) => {
+  return apiClient.post("/api/v1/patients/assessment", {
+    template_id: template_id,
+    assessment_data: assessment_data,
+    hospital_id: hospital_id
+  });
 };
 
 const createTreatment = (treatmentData) => {

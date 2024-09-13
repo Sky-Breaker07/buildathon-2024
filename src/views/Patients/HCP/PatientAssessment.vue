@@ -1,121 +1,261 @@
 <template>
   <div class="min-h-screen bg-gray-100 py-12 px-4 sm:px-6 lg:px-8">
     <div class="max-w-7xl mx-auto">
-      <h1 class="text-3xl font-extrabold text-gray-900 mb-8">Patient Assessment</h1>
-      
-      <!-- Template Selection -->
-      <div v-if="!selectedTemplate" class="bg-white shadow overflow-hidden sm:rounded-lg mb-8">
-        <div class="px-4 py-5 sm:px-6">
-          <h2 class="text-lg leading-6 font-medium text-gray-900">Select Assessment Template</h2>
-          <p class="mt-1 max-w-2xl text-sm text-gray-500">Choose a template to start the patient assessment.</p>
+      <h1 class="text-4xl font-extrabold text-gray-900 mb-8">
+        Patient Assessment
+      </h1>
+
+      <!-- Patient Information Card -->
+      <div
+        v-if="patientData"
+        class="bg-white shadow-lg rounded-lg overflow-hidden mb-8"
+      >
+        <div class="px-6 py-4 bg-gradient-to-r from-blue-500 to-indigo-600">
+          <h2 class="text-2xl font-bold text-white">Patient Information</h2>
         </div>
-        <div class="border-t border-gray-200">
-          <table class="min-w-full divide-y divide-gray-200">
-            <thead class="bg-gray-50">
-              <tr>
-                <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Name</th>
-                <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Description</th>
-                <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Fields</th>
-                <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Action</th>
-              </tr>
-            </thead>
-            <tbody class="bg-white divide-y divide-gray-200">
-              <tr v-for="template in assessmentTemplates" :key="template._id" class="hover:bg-gray-50">
-                <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">{{ template.name }}</td>
-                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{{ template.description }}</td>
-                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{{ Object.keys(template.fields).length }}</td>
-                <td class="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
-                  <button @click="selectTemplate(template)" class="text-indigo-600 hover:text-indigo-900">Select</button>
-                </td>
-              </tr>
-            </tbody>
-          </table>
+        <div class="p-6">
+          <div class="grid grid-cols-2 gap-4">
+            <div>
+              <p class="text-sm font-medium text-gray-500">Name</p>
+              <p class="text-lg font-semibold text-gray-900">
+                {{ patientData.biodata.name }}
+              </p>
+            </div>
+            <div>
+              <p class="text-sm font-medium text-gray-500">Hospital ID</p>
+              <p class="text-lg font-semibold text-gray-900">
+                {{ patientData.hospital_record.hospital_id }}
+              </p>
+            </div>
+            <div>
+              <p class="text-sm font-medium text-gray-500">Age</p>
+              <p class="text-lg font-semibold text-gray-900">
+                {{ patientData.biodata.age }} years
+              </p>
+            </div>
+            <div>
+              <p class="text-sm font-medium text-gray-500">Sex</p>
+              <p class="text-lg font-semibold text-gray-900">
+                {{ patientData.biodata.sex }}
+              </p>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div
+        v-else
+        class="bg-white shadow-lg rounded-lg overflow-hidden mb-8 p-6"
+      >
+        <p class="text-lg text-gray-600">Loading patient information...</p>
+      </div>
+
+      <!-- Tabs for New Assessment and Past Assessments -->
+      <div v-if="patientData" class="mb-8">
+        <div class="sm:hidden">
+          <select
+            v-model="activeTab"
+            class="block w-full rounded-md border-gray-300 py-2 pl-3 pr-10 text-base focus:border-indigo-500 focus:outline-none focus:ring-indigo-500 sm:text-sm"
+          >
+            <option value="new">New Assessment</option>
+            <option value="past">Past Assessments</option>
+          </select>
+        </div>
+        <div class="hidden sm:block">
+          <div class="border-b border-gray-200">
+            <nav class="-mb-px flex space-x-8" aria-label="Tabs">
+              <a
+                href="#"
+                @click.prevent="activeTab = 'new'"
+                :class="[
+                  activeTab === 'new'
+                    ? 'border-indigo-500 text-indigo-600'
+                    : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300',
+                  'whitespace-nowrap py-4 px-1 border-b-2 font-medium text-sm',
+                ]"
+              >
+                New Assessment
+              </a>
+              <a
+                href="#"
+                @click.prevent="activeTab = 'past'"
+                :class="[
+                  activeTab === 'past'
+                    ? 'border-indigo-500 text-indigo-600'
+                    : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300',
+                  'whitespace-nowrap py-4 px-1 border-b-2 font-medium text-sm',
+                ]"
+              >
+                Past Assessments
+              </a>
+            </nav>
+          </div>
         </div>
       </div>
 
-      <!-- Assessment Form -->
-      <div v-else class="bg-white shadow-2xl rounded-lg overflow-hidden">
-        <div class="px-6 py-8 bg-gradient-to-r from-indigo-500 to-purple-600 text-white">
-          <h2 class="text-3xl font-extrabold">{{ selectedTemplate.name }}</h2>
-          <p class="mt-2 text-indigo-100">{{ selectedTemplate.description }}</p>
-        </div>
-        <div class="p-6">
-          <form @submit.prevent="submitAssessment" class="space-y-8">
-            <div v-for="(field, key) in selectedTemplate.fields" :key="key" class="space-y-2">
-              <label :for="key" class="block text-sm font-medium text-gray-700 uppercase tracking-wide">
-                {{ field.label }}
-                <span v-if="field.required" class="text-red-500">*</span>
-              </label>
-              
-              <template v-if="field.type === 'String'">
-                <input v-if="!field.label.toLowerCase().includes('history')"
-                  :id="key"
-                  v-model="assessmentData[key]"
-                  type="text"
-                  :required="field.required"
-                  :placeholder="field.placeholder"
-                  class="mt-1 block w-full px-4 py-3 bg-gray-50 border border-gray-300 rounded-md shadow-sm focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition duration-150 ease-in-out"
-                />
-                <textarea v-else
-                  :id="key"
-                  v-model="assessmentData[key]"
-                  :required="field.required"
-                  :placeholder="field.placeholder"
-                  rows="4"
-                  class="mt-1 block w-full px-4 py-3 bg-gray-50 border border-gray-300 rounded-md shadow-sm focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition duration-150 ease-in-out"
-                ></textarea>
-              </template>
-              
-              <input v-else-if="field.type === 'Number'" 
-                :id="key"
-                v-model="assessmentData[key]"
-                type="number"
-                :required="field.required"
-                :placeholder="field.placeholder"
-                class="mt-1 block w-full px-4 py-3 bg-gray-50 border border-gray-300 rounded-md shadow-sm focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition duration-150 ease-in-out"
-              />
-              
-              <select v-else-if="field.type === 'Array' && field.options.length > 0"
-                :id="key"
-                v-model="assessmentData[key]"
-                :required="field.required"
-                class="mt-1 block w-full pl-4 pr-10 py-3 bg-gray-50 border border-gray-300 rounded-md shadow-sm focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition duration-150 ease-in-out"
+      <!-- New Assessment Form -->
+      <div v-if="activeTab === 'new' && patientData">
+        <!-- Template Selection -->
+        <div
+          v-if="!selectedTemplate"
+          class="bg-white shadow-lg rounded-lg overflow-hidden mb-8"
+        >
+          <div class="px-6 py-4 bg-gradient-to-r from-green-500 to-teal-600">
+            <h2 class="text-2xl font-bold text-white">
+              Select Assessment Template
+            </h2>
+          </div>
+          <div class="p-6">
+            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+              <div
+                v-for="template in assessmentTemplates"
+                :key="template._id"
+                class="bg-white border border-gray-200 rounded-lg shadow-sm hover:shadow-md transition-shadow duration-300 ease-in-out p-4 cursor-pointer"
+                @click="selectTemplate(template)"
               >
-                <option value="">Select an option</option>
-                <option v-for="option in field.options" :key="option" :value="option">{{ option }}</option>
-              </select>
-              
-              <div v-else-if="field.type === 'Boolean'" class="flex items-center">
-                <input 
-                  :id="key"
-                  v-model="assessmentData[key]"
-                  type="checkbox"
-                  class="h-5 w-5 text-indigo-600 border-gray-300 rounded focus:ring-indigo-500 transition duration-150 ease-in-out"
-                />
-                <label :for="key" class="ml-3 block text-sm text-gray-700">{{ field.label }}</label>
-              </div>
-              
-              <input v-else-if="field.type === 'Date'"
-                :id="key"
-                v-model="assessmentData[key]"
-                type="date"
-                :required="field.required"
-                class="mt-1 block w-full px-4 py-3 bg-gray-50 border border-gray-300 rounded-md shadow-sm focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition duration-150 ease-in-out"
-              />
-            </div>
-            
-            <div class="pt-6 border-t border-gray-200">
-              <div class="flex justify-end space-x-3">
-                <button type="button" @click="resetForm" class="px-6 py-3 bg-white text-gray-700 rounded-md border border-gray-300 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 transition duration-150 ease-in-out">
-                  Reset
-                </button>
-                <button type="submit" class="px-6 py-3 bg-gradient-to-r from-indigo-600 to-purple-600 text-white rounded-md hover:from-indigo-700 hover:to-purple-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 transition duration-150 ease-in-out">
-                  Submit Assessment
-                </button>
+                <h3 class="text-lg font-semibold text-gray-900 mb-2">
+                  {{ template.name }}
+                </h3>
+                <p class="text-sm text-gray-600 mb-4">
+                  {{ template.description }}
+                </p>
+                <p class="text-xs text-gray-500">
+                  Fields: {{ countFields(template.fields) }}
+                </p>
               </div>
             </div>
-          </form>
+          </div>
         </div>
+
+        <!-- Assessment Form -->
+        <div
+          v-if="activeTab === 'new' && selectedTemplate"
+          class="bg-white shadow-lg rounded-lg overflow-hidden"
+        >
+          <div
+            class="px-6 py-4 bg-gradient-to-r from-indigo-500 to-purple-600 text-white"
+          >
+            <h2 class="text-2xl font-bold">{{ selectedTemplate.name }}</h2>
+            <p class="mt-2 text-indigo-100">
+              {{ selectedTemplate.description }}
+            </p>
+          </div>
+          <div class="p-6">
+            <form @submit.prevent="submitAssessment" class="space-y-8">
+              <div
+                v-for="(sectionFields, sectionName) in selectedTemplate.fields"
+                :key="sectionName"
+                class="space-y-6"
+              >
+                <h3 class="text-xl font-semibold text-gray-800">
+                  {{ sectionName }}
+                </h3>
+                <div
+                  v-for="(field, fieldKey) in sectionFields"
+                  :key="fieldKey"
+                  class="space-y-2"
+                >
+                  <label
+                    :for="`${sectionName}_${fieldKey}`"
+                    class="block text-sm font-medium text-gray-700 uppercase tracking-wide"
+                  >
+                    {{ field.label }}
+                    <span v-if="field.required" class="text-red-500">*</span>
+                  </label>
+                  
+                  <component
+  :is="getFieldComponent(field.type)"
+  :id="`${sectionName}_${fieldKey}`"
+  :value="assessmentData[sectionName][field.label]"
+  @input="updateAssessmentData(sectionName, field.label, $event.target.value)"
+  :required="field.required"
+  :placeholder="field.placeholder"
+  :type="field.type.toLowerCase()"
+  :options="field.options"
+  class="mt-1 block w-full px-4 py-3 bg-gray-50 border border-gray-300 rounded-md shadow-sm focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition duration-150 ease-in-out"
+/>
+                </div>
+              </div>
+              
+              <div class="pt-6 border-t border-gray-200">
+                <div class="flex justify-end space-x-3">
+                  <button
+                    type="button"
+                    @click="resetForm"
+                    class="px-6 py-3 bg-white text-gray-700 rounded-md border border-gray-300 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 transition duration-150 ease-in-out"
+                  >
+                    Reset
+                  </button>
+                  <button
+                    type="submit"
+                    class="px-6 py-3 bg-gradient-to-r from-indigo-600 to-purple-600 text-white rounded-md hover:from-indigo-700 hover:to-purple-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 transition duration-150 ease-in-out"
+                  >
+                    Submit Assessment
+                  </button>
+                </div>
+              </div>
+            </form>
+          </div>
+        </div>
+      </div>
+
+      <!-- Past Assessments -->
+      <div v-else-if="activeTab === 'past' && patientData" class="space-y-8">
+        <div
+          v-for="(assessments, profession) in groupedAssessments"
+          :key="profession"
+          class="bg-white shadow-lg rounded-lg overflow-hidden"
+        >
+          <div class="px-6 py-4 bg-gradient-to-r from-purple-500 to-pink-600">
+            <h2 class="text-2xl font-bold text-white">
+              {{ profession }} Assessments
+            </h2>
+          </div>
+          <div class="p-6">
+            <div
+              v-for="(assessment, index) in assessments"
+              :key="index"
+              class="mb-6 last:mb-0"
+            >
+              <div class="flex justify-between items-center mb-2">
+                <h3 class="text-lg font-semibold text-gray-900">
+                  {{ assessment.template.name }}
+                </h3>
+                <p class="text-sm text-gray-500">
+                  {{ new Date(assessment.createdAt).toLocaleString() }}
+                </p>
+              </div>
+              <div class="bg-gray-50 rounded-lg p-4">
+                <div
+                  v-for="(sectionData, sectionName) in assessment.assessment_data"
+                  :key="sectionName"
+                  class="mb-4"
+                >
+                  <h4 class="text-md font-medium text-gray-700 mb-2">
+                    {{ sectionName }}
+                  </h4>
+                  <div
+                    v-for="(value, key) in sectionData"
+                    :key="key"
+                    class="ml-4 mb-2"
+                  >
+                    <p class="text-sm font-medium text-gray-600">
+                      {{ assessment.template.fields[sectionName][key].label }}:
+                    </p>
+                    <p class="text-sm text-gray-900">{{ value }}</p>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Loading state -->
+      <div
+        v-if="!patientData"
+        class="bg-white shadow-lg rounded-lg overflow-hidden p-6"
+      >
+        <p class="text-lg text-gray-600">Loading patient data...</p>
       </div>
     </div>
     <LoadingModal ref="loadingModal" />
@@ -123,7 +263,7 @@
 </template>
 
 <style scoped>
-@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap');
+@import url("https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap");
 
 .bg-gradient-to-r {
   background-size: 200% 200%;
@@ -144,7 +284,7 @@
 
 /* Apply Poppins font to all text */
 * {
-  font-family: 'Poppins', sans-serif;
+  font-family: "Poppins", sans-serif;
 }
 
 /* Custom styles for form elements */
@@ -162,7 +302,8 @@ input[type="date"]:focus,
 textarea:focus,
 select:focus {
   transform: translateY(-2px);
-  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1),
+    0 2px 4px -1px rgba(0, 0, 0, 0.06);
 }
 
 /* Custom checkbox styles */
@@ -204,14 +345,16 @@ input[type="checkbox"]:checked:after {
 </style>
 
 <script setup>
-import { ref, onMounted, computed } from 'vue';
-import { useRouter } from 'vue-router';
-import { useToast } from 'vue-toastification';
-import { useStaffStore } from '@/stores/staff-management';
-import { getAssessmentTemplatesByProfession } from '@/utils/assessmentTemplate';
-import LoadingModal from '@/components/LoadingModal.vue';
+import { ref, onMounted, computed, watch } from "vue";
+import { useRouter, useRoute } from "vue-router";
+import { useToast } from "vue-toastification";
+import { useStaffStore } from "@/stores/staff-management";
+import { getAssessmentTemplatesByProfession } from "@/utils/assessmentTemplate";
+import { createAssessment, getPatient } from "@/utils/patientManagement";
+import LoadingModal from "@/components/LoadingModal.vue";
 
 const router = useRouter();
+const route = useRoute();
 const toast = useToast();
 const staffStore = useStaffStore();
 const loadingModal = ref(null);
@@ -219,14 +362,34 @@ const loadingModal = ref(null);
 const assessmentTemplates = ref([]);
 const selectedTemplate = ref(null);
 const assessmentData = ref({});
+const patientData = ref(null);
+const activeTab = ref("new");
 
 const currentUser = computed(() => staffStore.currentUser);
+watch(assessmentData, (newValue) => {
+  console.log('assessmentData updated:', newValue);
+}, { deep: true });
+
+const updateAssessmentData = (sectionName, fieldLabel, value) => {
+  assessmentData.value[sectionName][fieldLabel] = value;
+};
+
+const groupedAssessments = computed(() => {
+  if (!patientData.value) return {};
+  return patientData.value.assessments.reduce((acc, assessment) => {
+    const profession = assessment.template.profession;
+    if (!acc[profession]) acc[profession] = [];
+    acc[profession].push(assessment);
+    return acc;
+  }, {});
+});
 
 onMounted(async () => {
   if (!currentUser.value) {
     await fetchCurrentUser();
   }
   await fetchAssessmentTemplates();
+  await fetchPatientData();
 });
 
 const fetchCurrentUser = async () => {
@@ -234,9 +397,9 @@ const fetchCurrentUser = async () => {
     loadingModal.value.show();
     await staffStore.fetchCurrentUser();
   } catch (error) {
-    console.error('Error fetching current user:', error);
-    toast.error('Failed to fetch user data. Please try again.');
-    router.push('/login');
+    console.error("Error fetching current user:", error);
+    toast.error("Failed to fetch user data. Please try again.");
+    router.push("/login");
   } finally {
     loadingModal.value.hide();
   }
@@ -245,44 +408,114 @@ const fetchCurrentUser = async () => {
 const fetchAssessmentTemplates = async () => {
   try {
     loadingModal.value.show();
-    const response = await getAssessmentTemplatesByProfession(currentUser.value.profession);
+    const response = await getAssessmentTemplatesByProfession(
+      currentUser.value.profession
+    );
     assessmentTemplates.value = response.data.assessmentTemplates;
   } catch (error) {
-    console.error('Error fetching assessment templates:', error);
-    toast.error('Failed to fetch assessment templates. Please try again.');
+    console.error("Error fetching assessment templates:", error);
+    toast.error("Failed to fetch assessment templates. Please try again.");
   } finally {
     loadingModal.value.hide();
   }
 };
 
+const fetchPatientData = async () => {
+  try {
+    loadingModal.value.show();
+    const hospitalId = route.params.hospital_id;
+    const response = await getPatient(hospitalId);
+    if (
+      response.data &&
+      response.data.status === "Success" &&
+      response.data.data
+    ) {
+      patientData.value = response.data.data;
+    } else {
+      throw new Error("Invalid response structure");
+    }
+  } catch (error) {
+    console.error("Error fetching patient data:", error);
+    toast.error("Failed to fetch patient data. Please try again.");
+    patientData.value = null; // Ensure patientData is null on error
+  } finally {
+    loadingModal.value.hide();
+  }
+};
+
+const countFields = (fields) => {
+  return Object.values(fields).reduce((count, section) => count + Object.keys(section).length, 0);
+};
+
 const selectTemplate = (template) => {
   selectedTemplate.value = template;
-  assessmentData.value = Object.keys(template.fields).reduce((acc, key) => {
-    acc[key] = template.fields[key].defaultValue || '';
+  assessmentData.value = Object.keys(template.fields).reduce((acc, sectionName) => {
+    acc[sectionName] = Object.values(template.fields[sectionName]).reduce((sectionAcc, field) => {
+      sectionAcc[field.label] = field.defaultValue || '';
+      return sectionAcc;
+    }, {});
     return acc;
   }, {});
 };
 
 const resetForm = () => {
-  assessmentData.value = Object.keys(selectedTemplate.value.fields).reduce((acc, key) => {
-    acc[key] = selectedTemplate.value.fields[key].defaultValue || '';
-    return acc;
-  }, {});
+  if (selectedTemplate.value) {
+    assessmentData.value = Object.keys(selectedTemplate.value.fields).reduce((acc, sectionName) => {
+      acc[sectionName] = Object.keys(selectedTemplate.value.fields[sectionName]).reduce((sectionAcc, fieldKey) => {
+        sectionAcc[fieldKey] = selectedTemplate.value.fields[sectionName][fieldKey].defaultValue || '';
+        return sectionAcc;
+      }, {});
+      return acc;
+    }, {});
+  }
 };
 
 const submitAssessment = async () => {
   try {
     loadingModal.value.show();
-    // Here you would typically send the assessmentData to your backend
-    console.log('Assessment Data:', assessmentData.value);
-    toast.success('Assessment submitted successfully!');
-    // Reset the form after successful submission
-    resetForm();
+    
+    if (!selectedTemplate.value || !patientData.value) {
+      throw new Error('Missing template or patient data');
+    }
+
+    const response = await createAssessment(
+      selectedTemplate.value._id,
+      assessmentData.value,
+      patientData.value.hospital_record.hospital_id
+    );
+
+    if (response.data && response.data.status === "Success") {
+      toast.success('Assessment submitted successfully!');
+      resetForm();
+      await fetchPatientData(); // Refresh patient data to include the new assessment
+      activeTab.value = 'past'; // Switch to past assessments tab
+    } else {
+      throw new Error('Unexpected response from server');
+    }
   } catch (error) {
     console.error('Error submitting assessment:', error);
-    toast.error('Failed to submit assessment. Please try again.');
+    toast.error(`Failed to submit assessment: ${error.message}`);
   } finally {
     loadingModal.value.hide();
   }
 };
+
+
+const getFieldComponent = (type) => {
+  switch (type) {
+    case "String":
+      return "input";
+    case "Number":
+      return "input";
+    case "Boolean":
+      return "input";
+    case "Date":
+      return "input";
+    case "Array":
+      return "select";
+    default:
+      return "input";
+  }
+};
+
 </script>

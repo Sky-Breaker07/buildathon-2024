@@ -52,11 +52,11 @@
           </button>
         </div>
         
-        <div v-for="(field, fieldIndex) in section.fields" :key="fieldIndex" class="mb-4 p-4 bg-white rounded-lg shadow-sm hover:shadow-md transition-all duration-300">
+        <div v-for="(field, fieldName) in section.fields" :key="fieldName" class="mb-4 p-4 bg-white rounded-lg shadow-sm hover:shadow-md transition-all duration-300">
           <FieldBuilder 
             :field="field" 
-            @remove="removeField(sectionIndex, fieldIndex)"
-            @update:field="updateField(sectionIndex, fieldIndex, $event)"
+            @remove="removeField(sectionIndex, fieldName)"
+            @update:field="updateField(sectionIndex, fieldName, $event)"
           />
         </div>
         
@@ -123,7 +123,7 @@ const fetchCurrentUser = async () => {
 };
 
 const addSection = () => {
-  sections.value.push({ name: '', fields: [] });
+  sections.value.push({ name: '', fields: {} });
 };
 
 const removeSection = (index) => {
@@ -131,38 +131,29 @@ const removeSection = (index) => {
 };
 
 const addField = (sectionIndex) => {
-  sections.value[sectionIndex].fields.push({
+  const fieldName = `field_${Object.keys(sections.value[sectionIndex].fields).length + 1}`;
+  sections.value[sectionIndex].fields[fieldName] = {
     type: 'String',
     label: '',
     required: false,
     placeholder: '',
     options: [],
     defaultValue: '',
-  });
+  };
 };
 
-const removeField = (sectionIndex, fieldIndex) => {
-  sections.value[sectionIndex].fields.splice(fieldIndex, 1);
+const removeField = (sectionIndex, fieldName) => {
+  delete sections.value[sectionIndex].fields[fieldName];
 };
 
-const updateField = (sectionIndex, fieldIndex, updatedField) => {
-  sections.value[sectionIndex].fields[fieldIndex] = updatedField;
+const updateField = (sectionIndex, fieldName, updatedField) => {
+  sections.value[sectionIndex].fields[fieldName] = updatedField;
 };
 
 const processedFields = computed(() => {
   const fields = {};
   sections.value.forEach((section) => {
-    section.fields.forEach((field) => {
-      const fieldName = `${section.name}_${field.label}`.replace(/\s+/g, '_').toLowerCase();
-      fields[fieldName] = {
-        type: field.type,
-        required: field.required,
-        options: field.options,
-        label: field.label,
-        placeholder: field.placeholder,
-        defaultValue: field.defaultValue,
-      };
-    });
+    fields[section.name] = section.fields;
   });
   return fields;
 });
@@ -176,7 +167,7 @@ const saveTemplate = async () => {
       description: description.value,
       fields: processedFields.value,
     };
-    
+    console.log(templateData);
     const response = await createAssessmentTemplate(templateData);
     assessmentTemplateStore.addTemplate(response.data);
     
