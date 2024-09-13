@@ -44,7 +44,9 @@
           </div>
           <!-- Registration Date (non-editable) -->
           <div class="flex flex-col">
-            <span class="font-semibold capitalize text-indigo-600">Registration Date</span>
+            <span class="font-semibold capitalize text-indigo-600"
+              >Registration Date</span
+            >
             <span class="text-gray-800">{{ registrationDate }}</span>
           </div>
         </div>
@@ -270,6 +272,65 @@
           </section>
         </template>
       </div>
+
+      <!-- Transfer Patient Section -->
+      <section
+        class="bg-white shadow-lg rounded-lg p-6 transform hover:scale-105 transition-transform duration-300"
+      >
+        <h2 class="text-3xl font-semibold mb-4 text-indigo-800">
+          Transfer Patient
+        </h2>
+        <div class="space-y-4">
+          <div>
+            <label
+              for="profession"
+              class="block text-sm font-medium text-gray-700"
+              >Select Profession</label
+            >
+            <select
+              id="profession"
+              v-model="selectedProfession"
+              @change="loadAdminHCPs"
+              class="mt-1 block w-full pl-3 pr-10 py-2 text-base border-gray-300 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm rounded-md"
+            >
+              <option value="">Select a profession</option>
+              <option
+                v-for="profession in uniqueProfessions"
+                :key="profession"
+                :value="profession"
+              >
+                {{ profession }}
+              </option>
+            </select>
+          </div>
+          <div v-if="selectedProfession">
+            <label for="admin" class="block text-sm font-medium text-gray-700"
+              >Select Admin</label
+            >
+            <select
+              id="admin"
+              v-model="selectedAdmin"
+              class="mt-1 block w-full pl-3 pr-10 py-2 text-base border-gray-300 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm rounded-md"
+            >
+              <option value="">Select an admin</option>
+              <option
+                v-for="admin in filteredAdminHCPs"
+                :key="admin.staff_id"
+                :value="admin.staff_id"
+              >
+                {{ admin.name }}
+              </option>
+            </select>
+          </div>
+          <button
+            @click="transferPatient"
+            :disabled="!selectedAdmin"
+            class="w-full bg-indigo-600 text-white px-4 py-2 rounded-md hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 disabled:opacity-50 disabled:cursor-not-allowed"
+          >
+            Transfer Patient
+          </button>
+        </div>
+      </section>
     </div>
     <div v-else class="text-center text-red-500 text-xl">
       Failed to load patient details. Please try again.
@@ -280,9 +341,15 @@
 <script setup>
 import { ref, onMounted, computed } from "vue";
 import { useRoute } from "vue-router";
-import { getPatient, updatePatientInfo } from "@/utils/patientManagement";
+import {
+  getPatient,
+  updatePatientInfo,
+  transferPatient as transferPatientAPI,
+} from "@/utils/patientManagement";
 import { usePatientStore } from "@/stores/patient-management";
 import { useToast } from "vue-toastification";
+import { getAdminHCPs } from "@/utils/staffManagement";
+import { getToken } from "@/utils/tokenUtils";
 
 const route = useRoute();
 const patientStore = usePatientStore();
@@ -292,6 +359,10 @@ const patient = ref(null);
 const isLoading = ref(true);
 const isEditing = ref(false);
 const editedBiodata = ref({});
+
+const adminHCPs = ref([]);
+const selectedProfession = ref("");
+const selectedAdmin = ref("");
 
 const fetchPatientDetails = async () => {
   isLoading.value = true;
@@ -326,16 +397,26 @@ const updateBiodata = async () => {
   try {
     const response = await updatePatientInfo({
       hospital_id: patient.value.hospital_record.hospital_id,
-      biodata: editedBiodata.value
+      biodata: editedBiodata.value,
     });
     if (response.data && response.data.status === "Success") {
-        toast.success("Patient biodata updated successfully");
+      toast.success("Patient biodata updated successfully");
       // Check if the response contains the updated biodata
-      if (response.data.data && response.data.data.patient && response.data.data.patient.biodata) {
-        patient.value.biodata = { ...patient.value.biodata, ...response.data.data.patient.biodata };
+      if (
+        response.data.data &&
+        response.data.data.patient &&
+        response.data.data.patient.biodata
+      ) {
+        patient.value.biodata = {
+          ...patient.value.biodata,
+          ...response.data.data.patient.biodata,
+        };
       } else {
         // If the server doesn't return the updated data, use the locally edited data
-        patient.value.biodata = { ...patient.value.biodata, ...editedBiodata.value };
+        patient.value.biodata = {
+          ...patient.value.biodata,
+          ...editedBiodata.value,
+        };
       }
       patientStore.setCurrentPatient(patient.value);
       isEditing.value = false;
@@ -345,7 +426,7 @@ const updateBiodata = async () => {
     }
   } catch (error) {
     console.error("Error updating patient biodata:", error);
-    // Optionally, you can add user feedback here, e.g., showing an error message
+    toast.error("Error updating patient biodata");
   }
 };
 
@@ -375,10 +456,6 @@ const getInputType = (key) => {
   if (key === "createdAt" || key === "updatedAt") return "date";
   return "text";
 };
-
-// const isReadOnlyField = (key) => {
-//   return ["_id", "createdAt", "updatedAt", "__v"].includes(key);
-// };
 
 const getAppointmentStatusClass = (status) => {
   switch (status.toLowerCase()) {
@@ -418,11 +495,69 @@ const filteredBiodata = computed(() => {
 });
 
 const registrationDate = computed(() => {
-  if (!patient.value || !patient.value.biodata || !patient.value.biodata.createdAt) return 'N/A';
+  if (
+    !patient.value ||
+    !patient.value.biodata ||
+    !patient.value.biodata.createdAt
+  )
+    return "N/A";
   return formatDate(patient.value.biodata.createdAt);
 });
 
+const loadAdminHCPs = async () => {
+  try {
+    const response = await getAdminHCPs();
+    if (response.data && response.data.status === "Success") {
+      adminHCPs.value = response.data.data.adminHealthcareProfessionals;
+    } else {
+      console.error("Unexpected response format:", response);
+      toast.error("Failed to load admin healthcare professionals");
+    }
+  } catch (error) {
+    console.error("Error fetching admin healthcare professionals:", error);
+    toast.error("Error fetching admin healthcare professionals");
+  }
+};
+
+const uniqueProfessions = computed(() => {
+  return [...new Set(adminHCPs.value.map((admin) => admin.profession))];
+});
+
+const filteredAdminHCPs = computed(() => {
+  return adminHCPs.value.filter(
+    (admin) => admin.profession === selectedProfession.value
+  );
+});
+
+const transferPatient = async () => {
+  if (!selectedAdmin.value || !patient.value) return;
+
+  try {
+    const token = getToken();
+    if (!token) {
+      toast.error("No authentication token found");
+      return;
+    }
+    const response = await transferPatientAPI(
+      patient.value.hospital_record.hospital_id,
+      selectedAdmin.value,
+      token
+    );
+    if (response.data && response.data.status === "Success") {
+      toast.success("Patient transferred successfully");
+      // Optionally, you can update the patient's data or redirect to another page
+    } else {
+      console.error("Unexpected response format:", response);
+      toast.error("Failed to transfer patient");
+    }
+  } catch (error) {
+    console.error("Error transferring patient:", error);
+    toast.error("Error transferring patient");
+  }
+};
+
 onMounted(() => {
   fetchPatientDetails();
+  loadAdminHCPs();
 });
 </script>

@@ -394,7 +394,7 @@ const fetchRegisteredStaff = async () => {
       ...(adminHCPs.data?.data?.adminHealthcareProfessionals || []).map(
         (hcp) => ({
           ...hcp,
-          role: `Head of ${hcp.profession}`,
+          role: `Head of ${hcp.profession}s`,
         })
       ),
       ...(hims.data?.data?.healthInformationManagers || []).map((him) => ({

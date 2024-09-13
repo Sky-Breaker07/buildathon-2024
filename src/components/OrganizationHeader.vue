@@ -1,37 +1,61 @@
 <template>
-  <header class="bg-gradient-to-r from-indigo-600 to-purple-600 text-white shadow-lg">
-    <div class="container mx-auto px-4 py-6">
-      <div class="flex items-center justify-between">
-        <div class="flex items-center">
-          <svg class="h-10 w-10 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"></path>
-          </svg>
-          <h1 class="text-3xl font-bold tracking-tight">{{ organizationName }}</h1>
-        </div>
-        <div class="text-sm">
-          <p>Welcome, {{ userName }}</p>
-          <p class="text-indigo-200">{{ userTitle }}</p>
-        </div>
-      </div>
-    </div>
-  </header>
+	<header class="w-full border border-clrOffWhite border-solid">
+		<div class="w-[90rem] mx-auto px-[2.175rem] py-[1rem]">
+			<nav class="flex items-center justify-between">
+				<div class="flex items-center gap-[0.5rem]">
+					<img
+						src="../assets/images/Logo.svg"
+						alt="Logo"
+						class="w-[2.375rem] h-[1.8125rem]"
+					/>
+					<span
+						class="font-afacad font-bold text-2xl leading-8 text-clrBlue"
+					>
+						CareLog
+					</span>
+				</div>
+
+				<p
+					class="font-afacad text-clrBlack font-bold text-2xl leading-8"
+				>
+					{{ organizationName }}
+				</p>
+
+				<div class="header__btns">
+					<ButtonComponent
+						v-if="!currentUser"
+						text="Login"
+					/>
+
+					<div
+						v-else
+						class="flex items-center gap-2"
+					>
+						<div
+							class="w-[2.875rem] h-[2.875rem] rounded-full bg-clrOffWhite"
+						></div>
+						<button
+							class="w-[2.875rem] h-[2.875rem] rounded-full text-clrOffWhite hover:text-offWhiteAlt transition-colors duration-500 ease"
+						>
+							<i class="bx bx-cog text-[2.875rem]"></i>
+						</button>
+					</div>
+				</div>
+			</nav>
+		</div>
+	</header>
 </template>
 
 <script setup>
-import { computed } from 'vue';
-import { useStaffStore } from '../stores/staff-management';
-import { storeToRefs } from 'pinia';
+	import { computed } from 'vue';
+	import { useStaffStore } from '../stores/staff-management';
+	import { storeToRefs } from 'pinia';
+	import ButtonComponent from './ButtonComponent.vue';
 
-const staffStore = useStaffStore();
-const { currentUser } = storeToRefs(staffStore);
+	const staffStore = useStaffStore();
+	const { currentUser } = storeToRefs(staffStore);
 
-const organizationName = computed(() => currentUser.value?.organization?.name || 'Organization');
-const userName = computed(() => `${currentUser.value?.firstName} ${currentUser.value?.lastName}`);
-const userTitle = computed(() => {
-  if (!currentUser.value) return '';
-  if (currentUser.value.role === 'SuperAdmin') return 'Chief Executive Officer';
-  if (currentUser.value.role === 'HealthCareProfessional') return currentUser.value.profession || 'Healthcare Professional';
-  if (currentUser.value.role === 'HealthInformationManager') return 'Health Information Manager';
-  return currentUser.value.role;
-});
+	const organizationName = computed(
+		() => currentUser.value?.organization?.name || ''
+	);
 </script>
