@@ -5,7 +5,7 @@
 				Welcome, {{ staffName }}
 			</h2>
 			<p class="font-poppins font-normal text-clrBlack text-[1.685rem]">
-				({{ splitString(currentUser?.role) }})
+				({{ userTitle }})
 			</p>
 		</div>
 
@@ -28,10 +28,14 @@
 		return `${currentUser?.value?.firstName} ${currentUser?.value?.lastName}`;
 	});
 
-	const splitString = (str) => {
-		return str
-			.replace(/([a-z0-9])([A-Z])/g, '$1 $2')
-			.replace(/([A-Z])([A-Z][a-z])/g, '$1 $2')
-			.trim();
-	};
+	const userTitle = computed(() => {
+		if (!currentUser.value) return '';
+		if (currentUser.value.role === 'SuperAdmin')
+			return 'Chief Executive Officer';
+		if (currentUser.value.role === 'HealthCareProfessional')
+			return currentUser.value.profession || 'Healthcare Professional';
+		if (currentUser.value.role === 'HealthInformationManager')
+			return 'Health Information Manager';
+		return currentUser.value.role;
+	});
 </script>
