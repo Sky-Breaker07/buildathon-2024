@@ -1,4 +1,5 @@
 <template>
+  <PatientTemplate/>
   <component :is="layout">
     <router-view />
   </component>
@@ -7,6 +8,8 @@
 <script setup>
 import { computed } from 'vue';
 import { useRoute } from 'vue-router';
+import PatientTemplate from './components/PatientTemplate.vue';
+
 
 const route = useRoute();
 
