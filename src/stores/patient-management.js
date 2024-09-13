@@ -97,5 +97,30 @@ export const usePatientStore = defineStore('patient', {
     setAssignedPatients(patients) {
       this.assignedPatients = patients || [];
     },
+    
+    // New actions for vital signs
+    addVitalSign(vitalSign) {
+      if (this.currentPatient) {
+        this.currentPatient.vital_signs.unshift(vitalSign);
+      }
+    },
+
+    updateVitalSign(index, updatedVitalSign) {
+      if (this.currentPatient && this.currentPatient.vital_signs[index]) {
+        this.currentPatient.vital_signs[index] = updatedVitalSign;
+      }
+    },
+
+    removeVitalSign(index) {
+      if (this.currentPatient) {
+        this.currentPatient.vital_signs.splice(index, 1);
+      }
+    },
+
+    clearVitalSigns() {
+      if (this.currentPatient) {
+        this.currentPatient.vital_signs = [];
+      }
+    },
   },
 });

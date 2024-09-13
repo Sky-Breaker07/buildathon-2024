@@ -70,9 +70,15 @@
       <section
         class="bg-white shadow-lg rounded-lg p-6 transform hover:scale-105 transition-transform duration-300"
       >
-        <h2 class="text-3xl font-semibold mb-4 text-indigo-800">
-          Hospital Record
-        </h2>
+        <div class="flex justify-between items-center mb-4">
+          <h2 class="text-3xl font-semibold text-indigo-800">Hospital Record</h2>
+          <button
+            @click="toggleEditHospitalRecord"
+            class="bg-indigo-500 text-white px-6 py-2 rounded-full hover:bg-indigo-600 transform hover:scale-110 transition-all duration-300"
+          >
+            {{ isEditingHospitalRecord ? "Cancel" : "Edit" }}
+          </button>
+        </div>
         <div class="grid grid-cols-2 md:grid-cols-3 gap-6">
           <div class="flex flex-col">
             <span class="font-semibold text-indigo-600">Hospital ID</span>
@@ -115,16 +121,42 @@
           </div>
           <div class="flex flex-col">
             <span class="font-semibold text-indigo-600">Session Count</span>
-            <span class="text-2xl text-gray-800">{{
-              patient.hospital_record.sessionCount || "N/A"
-            }}</span>
+            <span v-if="!isEditingHospitalRecord" class="text-2xl text-gray-800">
+              {{ patient.hospital_record.sessionCount || "N/A" }}
+            </span>
+            <input
+              v-else
+              v-model="editedHospitalRecord.sessionCount"
+              type="number"
+              class="border-2 rounded p-2 focus:ring-2 focus:ring-indigo-500 transition-all duration-300 border-indigo-500"
+            />
           </div>
           <div class="flex flex-col">
             <span class="font-semibold text-indigo-600">Night Count</span>
-            <span class="text-2xl text-gray-800">{{
-              patient.hospital_record.nightCount || "N/A"
-            }}</span>
+            <span v-if="!isEditingHospitalRecord" class="text-2xl text-gray-800">
+              {{ patient.hospital_record.nightCount || "N/A" }}
+            </span>
+            <input
+              v-else
+              v-model="editedHospitalRecord.nightCount"
+              type="number"
+              class="border-2 rounded p-2 focus:ring-2 focus:ring-indigo-500 transition-all duration-300 border-indigo-500"
+            />
           </div>
+        </div>
+        <div v-if="isEditingHospitalRecord" class="mt-4 flex justify-end space-x-4">
+          <button
+            @click="updateHospitalRecord"
+            class="bg-green-500 text-white px-6 py-2 rounded-full hover:bg-green-600 transform hover:scale-110 transition-all duration-300"
+          >
+            Save Changes
+          </button>
+          <button
+            @click="cancelEditHospitalRecord"
+            class="bg-red-500 text-white px-6 py-2 rounded-full hover:bg-red-600 transform hover:scale-110 transition-all duration-300"
+          >
+            Cancel
+          </button>
         </div>
       </section>
 
@@ -339,7 +371,7 @@
 </template>
 
 <script setup>
-import { ref, onMounted, computed } from "vue";
+import { ref, onMounted, computed, reactive } from "vue";
 import { useRoute } from "vue-router";
 import {
   getPatient,
@@ -350,6 +382,7 @@ import { usePatientStore } from "@/stores/patient-management";
 import { useToast } from "vue-toastification";
 import { getAdminHCPs } from "@/utils/staffManagement";
 import { getToken } from "@/utils/tokenUtils";
+import { updateSessionCount, updateNightCount } from "@/utils/patientManagement";
 
 const route = useRoute();
 const patientStore = usePatientStore();
@@ -359,6 +392,12 @@ const patient = ref(null);
 const isLoading = ref(true);
 const isEditing = ref(false);
 const editedBiodata = ref({});
+
+const isEditingHospitalRecord = ref(false);
+const editedHospitalRecord = reactive({
+  sessionCount: null,
+  nightCount: null,
+});
 
 const adminHCPs = ref([]);
 const selectedProfession = ref("");
@@ -427,6 +466,58 @@ const updateBiodata = async () => {
   } catch (error) {
     console.error("Error updating patient biodata:", error);
     toast.error("Error updating patient biodata");
+  }
+};
+
+const toggleEditHospitalRecord = () => {
+  if (!isEditingHospitalRecord.value) {
+    editedHospitalRecord.sessionCount = patient.value.hospital_record.sessionCount;
+    editedHospitalRecord.nightCount = patient.value.hospital_record.nightCount;
+  }
+  isEditingHospitalRecord.value = !isEditingHospitalRecord.value;
+};
+
+const cancelEditHospitalRecord = () => {
+  isEditingHospitalRecord.value = false;
+  editedHospitalRecord.sessionCount = null;
+  editedHospitalRecord.nightCount = null;
+};
+
+const updateHospitalRecord = async () => {
+  try {
+    const hospitalId = patient.value.hospital_record.hospital_id;
+    let updatedSuccessfully = true;
+
+    if (editedHospitalRecord.nightCount !== patient.value.hospital_record.nightCount) {
+      const nightCountResponse = await updateNightCount(hospitalId, editedHospitalRecord.nightCount);
+      if (nightCountResponse.data && nightCountResponse.data.status === "Success") {
+        patient.value.hospital_record.nightCount = editedHospitalRecord.nightCount;
+      } else {
+        updatedSuccessfully = false;
+        console.error("Failed to update night count:", nightCountResponse);
+      }
+    }
+
+    if (editedHospitalRecord.sessionCount !== patient.value.hospital_record.sessionCount) {
+      const sessionCountResponse = await updateSessionCount(hospitalId, editedHospitalRecord.sessionCount);
+      if (sessionCountResponse.data && sessionCountResponse.data.status === "Success") {
+        patient.value.hospital_record.sessionCount = editedHospitalRecord.sessionCount;
+      } else {
+        updatedSuccessfully = false;
+        console.error("Failed to update session count:", sessionCountResponse);
+      }
+    }
+
+    if (updatedSuccessfully) {
+      toast.success("Hospital record updated successfully");
+      patientStore.setCurrentPatient(patient.value);
+      isEditingHospitalRecord.value = false;
+    } else {
+      toast.error("Failed to update some hospital record fields");
+    }
+  } catch (error) {
+    console.error("Error updating hospital record:", error);
+    toast.error("Error updating hospital record");
   }
 };
 

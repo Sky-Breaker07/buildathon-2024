@@ -27,10 +27,11 @@ const createTreatment = (treatmentData) => {
 };
 
 const assignPatientToHCP = (hospitalId, staffId, token) => {
-  return apiClient.post("/api/v1/patients/assign-patient", 
+  return apiClient.post(
+    "/api/v1/patients/assign-patient",
     {
       hospital_id: hospitalId,
-      staffId: staffId
+      staffId: staffId,
     },
     {
       headers: {
@@ -109,7 +110,35 @@ const getAssignedPatients = (token) => {
       Authorization: `Bearer ${token}`,
     },
   });
-};  
+};
+
+const updateNightCount = (hospitalId, nightCount) => {
+  return apiClient.patch("/api/v1/patients/night-count", {
+    hospital_id: hospitalId,
+    nightCount: nightCount,
+  });
+};
+
+const updateSessionCount = (hospitalId, sessionCount) => {
+  return apiClient.patch("/api/v1/patients/session-count", {
+    hospital_id: hospitalId,
+    sessionCount: sessionCount,
+  });
+};
+
+const createVitals = (hospitalId, vitalsData) => {
+  return apiClient.post("/api/v1/patients/vital-sign", {
+    hospital_id: hospitalId,
+    vital_sign_data: vitalsData
+  });
+};
+
+const getPatientFullDetails = (hospitalId) => {
+  console.log(hospitalId)
+  return apiClient.post("/api/v1/patients/full-details", {
+    hospital_id: hospitalId
+  })
+}
 
 export {
   registerPatient,
@@ -126,5 +155,9 @@ export {
   acceptPatient,
   rejectPatient,
   getAdminJurisdictionPatients,
-  getAssignedPatients
+  getAssignedPatients,
+  updateNightCount,
+  updateSessionCount,
+  createVitals,
+  getPatientFullDetails
 };
