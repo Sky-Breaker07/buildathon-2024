@@ -22,12 +22,24 @@ const createAssessment = (template_id, assessment_data, hospital_id) => {
   return apiClient.post("/api/v1/patients/assessment", {
     template_id: template_id,
     assessment_data: assessment_data,
-    hospital_id: hospital_id
+    hospital_id: hospital_id,
   });
 };
 
-const createTreatment = (treatmentData) => {
-  return apiClient.post("/api/v1/patients/treatment", treatmentData);
+const createTreatment = (temlate_id, treatment_data, hospital_id) => {
+  return apiClient.post("/api/v1/patients/treatment", {
+    template_id: temlate_id,
+    treatment_data: treatment_data,
+    hospital_id: hospital_id,
+  });
+};
+
+const createReferral = (template_id, referral_data, hospital_id) => {
+  return apiClient.post("/api/v1/patients/referral", {
+    template_id: template_id,
+    referral_data: referral_data,
+    hospital_id: hospital_id,
+  });
 };
 
 const assignPatientToHCP = (hospitalId, staffId, token) => {
@@ -45,12 +57,20 @@ const assignPatientToHCP = (hospitalId, staffId, token) => {
   );
 };
 
-const createDischarge = (dischargeData) => {
-  return apiClient.post("/api/v1/patients/discharge", dischargeData);
+const createDischarge = (template_id, discharge_data, hospital_id) => {
+  return apiClient.post("/api/v1/patients/discharge", {
+    template_id: template_id,
+    discharge_data: discharge_data,
+    hospital_id: hospital_id,
+  });
 };
 
-const createEvaluation = (evaluationData) => {
-  return apiClient.post("/api/v1/patients/evaluation", evaluationData);
+const createEvaluation = (template_id, evaluation_data, hospital_id) => {
+  return apiClient.post("/api/v1/patients/evaluation", {
+    template_id: template_id,
+    evaluation_data: evaluation_data,
+    hospital_id: hospital_id,
+  });
 };
 
 const updatePatientInfo = (updateData) => {
@@ -133,16 +153,16 @@ const updateSessionCount = (hospitalId, sessionCount) => {
 const createVitals = (hospitalId, vitalsData) => {
   return apiClient.post("/api/v1/patients/vital-sign", {
     hospital_id: hospitalId,
-    vital_sign_data: vitalsData
+    vital_sign_data: vitalsData,
   });
 };
 
 const getPatientFullDetails = (hospitalId) => {
-  console.log(hospitalId)
+  console.log(hospitalId);
   return apiClient.post("/api/v1/patients/full-details", {
-    hospital_id: hospitalId
-  })
-}
+    hospital_id: hospitalId,
+  });
+};
 
 export {
   registerPatient,
@@ -153,6 +173,7 @@ export {
   assignPatientToHCP,
   createDischarge,
   createEvaluation,
+  createReferral,
   updatePatientInfo,
   getAllPatients,
   transferPatient,
@@ -163,5 +184,5 @@ export {
   updateNightCount,
   updateSessionCount,
   createVitals,
-  getPatientFullDetails
+  getPatientFullDetails,
 };

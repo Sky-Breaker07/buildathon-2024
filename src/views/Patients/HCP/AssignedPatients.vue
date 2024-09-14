@@ -46,7 +46,7 @@
                 </td>
                 <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">
                   <router-link 
-                    :to="`/hcp/assigned/${patient.hospital_record.hospital_id}`" 
+                    :to="`/dashboard/assigned/${patient.hospital_record.hospital_id}`" 
                     class="text-indigo-600 hover:text-indigo-900 transition-colors duration-200"
                   >
                     View Details

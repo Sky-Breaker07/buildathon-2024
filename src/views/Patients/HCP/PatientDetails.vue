@@ -232,6 +232,7 @@
               'treatments',
               'discharges',
               'evaluations',
+              'referrals',
             ]"
             :key="index"
           >

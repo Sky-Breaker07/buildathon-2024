@@ -1,7 +1,7 @@
 import apiClient from '../apiConfig';
 
 const createEvaluationTemplate = (templateData) => {
-  return apiClient.post('/api/v1/evaluation-templates', templateData);
+  return apiClient.post('/api/v1/evaluation-template', templateData);
 };
 
 const getEvaluationTemplates = () => {
@@ -10,6 +10,10 @@ const getEvaluationTemplates = () => {
 
 const getEvaluationTemplateById = (templateId) => {
   return apiClient.get(`/api/v1/evaluation-templates/${templateId}`);
+};
+
+const getEvaluationTemplatesByProfession = (profession) => {
+  return apiClient.get(`/api/v1/evaluation-template/profession/${profession}`);
 };
 
 const updateEvaluationTemplate = (templateId, updateData) => {
@@ -24,6 +28,7 @@ export {
   createEvaluationTemplate,
   getEvaluationTemplates,
   getEvaluationTemplateById,
+  getEvaluationTemplatesByProfession,
   updateEvaluationTemplate,
   deleteEvaluationTemplate
 };

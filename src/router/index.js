@@ -91,7 +91,7 @@ const routes = [
     meta: { requiresAuth: true, requiresAdminHCP: true },
   },
   {
-    path: "/hcp/assigned-patients",
+    path: "/dashboard/assigned-patients",
     name: "AssignedPatients",
     component: () => import("@/views/Patients/HCP/AssignedPatients.vue"),
     meta: {
@@ -101,7 +101,7 @@ const routes = [
     },
   },
   {
-    path: "/hcp/assigned/:hospital_id",
+    path: "/dashboard/assigned/:hospital_id",
     name: "AssignedPatientDetails",
     component: () => import("@/views/Patients/HCP/AssignedPatientDetails.vue"),
     meta: {
@@ -111,7 +111,7 @@ const routes = [
     },
   },
   {
-    path: "/hcp/assigned/:hospital_id/vitalsigns",
+    path: "/dashboard/assigned/:hospital_id/vitalsigns",
     name: "VitalSigns",
     component: () => import("@/views/Patients/HCP/VitalSigns.vue"),
     meta: {
@@ -121,7 +121,7 @@ const routes = [
     },
   },
   {
-    path: "/hcp/assigned/:hospital_id/assessments",
+    path: "/dashboard/assigned/:hospital_id/assessments",
     name: "Assessment",
     component: () => import("@/views/Patients/HCP/PatientAssessment.vue"),
     meta: {
@@ -131,9 +131,84 @@ const routes = [
     },
   },
   {
-    path: '/hcp/assessment-templates',
+    path: '/dashboard/assigned/:hospital_id/treatments',
+    name: 'Treatments',
+    component: () => import ('@/views/Patients/HCP/PatientTreatment.vue'),
+    meta: {
+      requiresAuth: true,
+      requiresHCP: true,
+      layout: ProtectedLayout,
+    }
+  },
+  {
+    path: '/dashboard/assigned/:hospital_id/evaluations',
+    name: 'Evaluation',
+    component: () => import ('@/views/Patients/HCP/PatientEvaluation.vue'),
+    meta: {
+      requiresAuth: true,
+      requiresHCP: true,
+      layout: ProtectedLayout,
+    }
+  },
+  {
+    path: '/dashboard/assigned/:hospital_id/discharges',
+    name: 'Discharge',
+    component: () => import ('@/views/Patients/HCP/PatientDischarge.vue'),
+    meta: {
+      requiresAuth: true,
+      requiresHCP: true,
+      layout: ProtectedLayout,
+    }
+  },
+  {
+    path: '/dashboard/assigned/:hospital_id/referrals',
+    name: 'Referral',
+    component: () => import ('@/views/Patients/HCP/PatientReferral.vue'),
+    meta: {
+      requiresAuth: true,
+      requiresHCP: true,
+      layout: ProtectedLayout,
+    }
+  },
+  {
+    path: '/dashboard/assessment-templates',
     name: 'AssessmentTemplate',
-    component: () => import ('@/views/Patients/HCP/AssessmentTemplate.vue')
+    component: () => import ('@/views/Patients/HCP/AssessmentTemplate.vue'),
+    meta: {
+      requiresAuth: true,
+      requiresAdminHCP: true,
+      layout: ProtectedLayout,
+    }
+  },
+  {
+    path: '/dashboard/treatment-templates',
+    name: 'TreatmentTemplate',
+    component: () => import ('@/views/Patients/HCP/TreatmentTemplate.vue'),
+    meta: {
+      requiresAuth: true,
+      requiresAdminHCP: true,
+      layout: ProtectedLayout,
+    }
+  },
+  {
+    path: '/dashboard/discharge-templates',
+    name: 'DischargeTemplate',
+    component: () => import ('@/views/Patients/HCP/DischargeTemplate.vue'),
+    meta: {
+      requiresAuth: true,
+      requiresAdminHCP: true,
+      layout: ProtectedLayout,
+    }
+  },
+  {
+    path: '/dashboard/evaluation-templates',
+    name: 'EvaluationTemplate',
+    component: () => import ('@/views/Patients/HCP/EvaluationTemplate.vue'),
+    meta: {
+      requiresAuth: true,
+      requiresAdminHCP: true,
+      layout: ProtectedLayout,
+    }
   },
   {
     path: "/:pathMatch(.*)*",

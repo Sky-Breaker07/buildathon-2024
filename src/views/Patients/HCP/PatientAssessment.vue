@@ -36,7 +36,7 @@
             <div>
               <p class="text-sm font-medium text-gray-500">Sex</p>
               <p class="text-lg font-semibold text-gray-900">
-                {{ patientData.biodata.sex }}
+                {{ capitalizeWord(patientData.biodata.sex) }}
               </p>
             </div>
           </div>
@@ -94,6 +94,10 @@
 
       <!-- New Assessment Form -->
       <div v-if="activeTab === 'new' && patientData">
+        <div v-if="assessmentTemplates.length === 0" class="bg-white shadow-lg rounded-lg overflow-hidden p-6">
+          <p class="text-lg text-gray-600">No assessment templates are available for your profession.</p>
+          <p class="text-md text-gray-500 mt-2">Please contact an administrator to create templates before adding new assessments.</p>
+        </div>
         <!-- Template Selection -->
         <div
           v-if="!selectedTemplate"
@@ -105,7 +109,11 @@
             </h2>
           </div>
           <div class="p-6">
-            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+            <div v-if="assessmentTemplates.length === 0" class="text-center">
+              <p class="text-lg text-gray-600">No assessment templates available for your profession.</p>
+              <p class="text-md text-gray-500 mt-2">Please contact an administrator to create templates.</p>
+            </div>
+            <div v-else class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
               <div
                 v-for="template in assessmentTemplates"
                 :key="template._id"
@@ -163,16 +171,16 @@
                   </label>
                   
                   <component
-  :is="getFieldComponent(field.type)"
-  :id="`${sectionName}_${fieldKey}`"
-  :value="assessmentData[sectionName][field.label]"
-  @input="updateAssessmentData(sectionName, field.label, $event.target.value)"
-  :required="field.required"
-  :placeholder="field.placeholder"
-  :type="field.type.toLowerCase()"
-  :options="field.options"
-  class="mt-1 block w-full px-4 py-3 bg-gray-50 border border-gray-300 rounded-md shadow-sm focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition duration-150 ease-in-out"
-/>
+                    :is="getFieldComponent(field.type)"
+                    :id="`${sectionName}_${fieldKey}`"
+                    :value="assessmentData[sectionName][fieldKey]"
+                    @input="updateAssessmentData(sectionName, fieldKey, $event.target.value)"
+                    :required="field.required"
+                    :placeholder="field.placeholder"
+                    :type="field.type.toLowerCase()"
+                    :options="field.options"
+                    class="mt-1 block w-full px-4 py-3 bg-gray-50 border border-gray-300 rounded-md shadow-sm focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition duration-150 ease-in-out"
+                  />
                 </div>
               </div>
               
@@ -200,7 +208,11 @@
 
       <!-- Past Assessments -->
       <div v-else-if="activeTab === 'past' && patientData" class="space-y-8">
+        <div v-if="Object.keys(groupedAssessments).length === 0" class="bg-white shadow-lg rounded-lg overflow-hidden p-6">
+          <p class="text-lg text-gray-600">No past assessments found for this patient.</p>
+        </div>
         <div
+          v-else
           v-for="(assessments, profession) in groupedAssessments"
           :key="profession"
           class="bg-white shadow-lg rounded-lg overflow-hidden"
@@ -239,7 +251,7 @@
                     class="ml-4 mb-2"
                   >
                     <p class="text-sm font-medium text-gray-600">
-                      {{ assessment.template.fields[sectionName][key].label }}:
+                      {{ key }}:
                     </p>
                     <p class="text-sm text-gray-900">{{ value }}</p>
                   </div>
@@ -345,7 +357,7 @@ input[type="checkbox"]:checked:after {
 </style>
 
 <script setup>
-import { ref, onMounted, computed, watch } from "vue";
+import { ref, onMounted, computed } from "vue";
 import { useRouter, useRoute } from "vue-router";
 import { useToast } from "vue-toastification";
 import { useStaffStore } from "@/stores/staff-management";
@@ -366,18 +378,19 @@ const patientData = ref(null);
 const activeTab = ref("new");
 
 const currentUser = computed(() => staffStore.currentUser);
-watch(assessmentData, (newValue) => {
-  console.log('assessmentData updated:', newValue);
-}, { deep: true });
 
-const updateAssessmentData = (sectionName, fieldLabel, value) => {
-  assessmentData.value[sectionName][fieldLabel] = value;
+const updateAssessmentData = (sectionName, fieldKey, value) => {
+  assessmentData.value[sectionName][fieldKey] = value;
+};
+
+const capitalizeWord = (str) => {
+  return str.replace(/\b\w/g, char => char.toUpperCase());
 };
 
 const groupedAssessments = computed(() => {
-  if (!patientData.value) return {};
+  if (!patientData.value || !patientData.value.assessments || patientData.value.assessments.length === 0) return {};
   return patientData.value.assessments.reduce((acc, assessment) => {
-    const profession = assessment.template.profession;
+    const profession = assessment.template?.profession || 'Unknown';
     if (!acc[profession]) acc[profession] = [];
     acc[profession].push(assessment);
     return acc;
@@ -414,7 +427,12 @@ const fetchAssessmentTemplates = async () => {
     assessmentTemplates.value = response.data.assessmentTemplates;
   } catch (error) {
     console.error("Error fetching assessment templates:", error);
-    toast.error("Failed to fetch assessment templates. Please try again.");
+    if (error.response && error.response.status === 404) {
+      toast.warning("No assessment templates found for your profession. Please contact an administrator.");
+      assessmentTemplates.value = [];
+    } else {
+      toast.error("Failed to fetch assessment templates. Please try again.");
+    }
   } finally {
     loadingModal.value.hide();
   }
@@ -431,6 +449,7 @@ const fetchPatientData = async () => {
       response.data.data
     ) {
       patientData.value = response.data.data;
+      console.log('Fetched patient data:', patientData.value); // For debugging
     } else {
       throw new Error("Invalid response structure");
     }
@@ -450,12 +469,14 @@ const countFields = (fields) => {
 const selectTemplate = (template) => {
   selectedTemplate.value = template;
   assessmentData.value = Object.keys(template.fields).reduce((acc, sectionName) => {
-    acc[sectionName] = Object.values(template.fields[sectionName]).reduce((sectionAcc, field) => {
-      sectionAcc[field.label] = field.defaultValue || '';
+    acc[sectionName] = Object.keys(template.fields[sectionName]).reduce((sectionAcc, fieldKey) => {
+      const field = template.fields[sectionName][fieldKey];
+      sectionAcc[fieldKey] = field.defaultValue || '';
       return sectionAcc;
     }, {});
     return acc;
   }, {});
+  console.log('Initial Assessment Data:', assessmentData.value); // For debugging
 };
 
 const resetForm = () => {
@@ -478,9 +499,25 @@ const submitAssessment = async () => {
       throw new Error('Missing template or patient data');
     }
 
+    // Transform the assessmentData to use labels instead of field keys
+    const transformedAssessmentData = Object.entries(assessmentData.value).reduce((acc, [sectionName, sectionData]) => {
+      acc[sectionName] = Object.entries(sectionData).reduce((sectionAcc, [fieldKey, value]) => {
+        const field = selectedTemplate.value.fields[sectionName][fieldKey];
+        if (field && field.label) {
+          sectionAcc[field.label] = value;
+        } else {
+          console.warn(`Missing label for field ${fieldKey} in section ${sectionName}`);
+        }
+        return sectionAcc;
+      }, {});
+      return acc;
+    }, {});
+
+    console.log('Transformed Assessment Data:', transformedAssessmentData); // For debugging
+
     const response = await createAssessment(
       selectedTemplate.value._id,
-      assessmentData.value,
+      transformedAssessmentData,
       patientData.value.hospital_record.hospital_id
     );
 

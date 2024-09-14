@@ -107,9 +107,10 @@
             'treatments',
             'discharges',
             'evaluations',
+            'referrals',
           ]"
           :key="section"
-          :to="`/hcp/assigned/${patient.hospital_record.hospital_id}/${section}`"
+          :to="`/dashboard/assigned/${patient.hospital_record.hospital_id}/${section}`"
           class="bg-white shadow-lg rounded-lg p-6 transform hover:scale-105 transition-transform duration-300 cursor-pointer"
         >
           <h2 class="text-3xl font-semibold mb-4 text-indigo-800 capitalize">

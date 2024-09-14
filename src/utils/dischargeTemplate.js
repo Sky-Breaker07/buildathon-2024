@@ -1,7 +1,7 @@
 import apiClient from '../apiConfig';
 
 const createDischargeTemplate = (templateData) => {
-  return apiClient.post('/api/v1/discharge-templates', templateData);
+  return apiClient.post('/api/v1/discharge-template', templateData);
 };
 
 const getDischargeTemplates = () => {
@@ -10,6 +10,10 @@ const getDischargeTemplates = () => {
 
 const getDischargeTemplateById = (templateId) => {
   return apiClient.get(`/api/v1/discharge-templates/${templateId}`);
+};
+
+const getDischargeTemplatesByProfession = (profession) => {
+  return apiClient.get(`/api/v1/discharge-template/profession/${profession}`);
 };
 
 const updateDischargeTemplate = (templateId, updateData) => {
@@ -24,6 +28,7 @@ export {
   createDischargeTemplate,
   getDischargeTemplates,
   getDischargeTemplateById,
+  getDischargeTemplatesByProfession,
   updateDischargeTemplate,
   deleteDischargeTemplate
 };

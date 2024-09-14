@@ -222,7 +222,7 @@
 			if (loadingModal.value) {
 				loadingModal.value.show();
 			}
-			await router.push('/hcp/assigned-patients');
+			await router.push('/dashboard/assigned-patients');
 		} catch (error) {
 			console.error('Error navigating to Assigned Patients:', error);
 			toast.error(
