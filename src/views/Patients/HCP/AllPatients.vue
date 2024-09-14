@@ -124,7 +124,7 @@
 							</td>
 							<td class="py-4 px-2 border-b">
 								<router-link
-									:to="`/hcp/patient/${patient.hospital_id}`"
+									:to="`/dashboard/patient/${patient.hospital_id}`"
 									class="bg-clrBlue text-clrWhite transition duration-500 ease-in-out hover:bg-indigo-700 px-4 py-2 rounded-md"
 									>Access File</router-link
 								>
@@ -178,7 +178,7 @@
 						</td>
 						<td class="py-4 px-2 border-b">
 							<router-link
-								:to="`/hcp/patient/${patient.hospital_id}`"
+								:to="`/dashboard/patient/${patient.hospital_id}`"
 								class="bg-clrBlue text-clrWhite transition duration-500 ease-in-out hover:bg-indigo-700 px-4 py-2 rounded-md"
 								>Access File</router-link
 							>

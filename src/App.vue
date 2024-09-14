@@ -6,13 +6,21 @@
 </template>
 
 <script setup>
-	import { computed } from 'vue';
+	import { computed, onMounted } from 'vue';
 	import { useRoute } from 'vue-router';
 	import { warmUp } from './utils/misc';
 	import OrganizationHeader from './components/OrganizationHeader.vue'
 	const route = useRoute();
 	
-	warmUp();
+	
+	onMounted(async () => {
+		const warmingUp = await warmUp();
+
+		if (warmingUp) {
+			console.log(warmingUp.message);
+		}
+	});
+	
 	const layout = computed(() => {
 		return route.meta.layout || 'div';
 	});

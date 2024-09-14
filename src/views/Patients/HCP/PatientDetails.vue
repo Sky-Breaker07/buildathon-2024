@@ -224,7 +224,7 @@
           </p>
         </section>
   
-        <!-- Assessments, Treatments, Discharges, and Evaluations Sections -->
+        <!-- Assessments, Treatments, Discharges, Referrals and Evaluations Sections -->
         <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
           <template
             v-for="(section, index) in [
@@ -279,7 +279,7 @@
           class="bg-white shadow-lg rounded-lg p-6 transform hover:scale-105 transition-transform duration-300"
         >
           <h2 class="text-3xl font-semibold mb-4 text-indigo-800">
-            Transfer Patient
+            Refer Patient
           </h2>
           <div class="space-y-4">
             <div>

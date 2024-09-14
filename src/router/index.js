@@ -4,7 +4,7 @@ import { useStaffStore } from "../stores/staff-management";
 import ProtectedLayout from "../layouts/ProtectedLayout.vue";
 import RegisterPatient from "@/views/Patients/Him/RegisterPatient.vue";
 import AllPatients from "@/views/Patients/Him/AllPatients.vue";
-
+import AllTemplates from '@/views/Patients/HCP/AllTemplates.vue';
 
 const routes = [
   {
@@ -75,7 +75,7 @@ const routes = [
     meta: { requiresAuth: true },
   },
   {
-    path: "/hcp/all-patients",
+    path: "/dashboard/all-patients",
     name: "AllPatientsHCP",
     component: () => import("@/views/Patients/HCP/AllPatients.vue"),
     meta: {
@@ -85,7 +85,7 @@ const routes = [
     },
   },
   {
-    path: "/hcp/patient/:hospital_id",
+    path: "/dashboard/patient/:hospital_id",
     name: "PatientDetailsHCP",
     component: () => import("@/views/Patients/HCP/PatientDetails.vue"),
     meta: { requiresAuth: true, requiresAdminHCP: true },
@@ -171,7 +171,7 @@ const routes = [
     }
   },
   {
-    path: '/dashboard/assessment-templates',
+    path: '/dashboard/templates/assessment-templates',
     name: 'AssessmentTemplate',
     component: () => import ('@/views/Patients/HCP/AssessmentTemplate.vue'),
     meta: {
@@ -181,7 +181,7 @@ const routes = [
     }
   },
   {
-    path: '/dashboard/treatment-templates',
+    path: '/dashboard/templates/treatment-templates',
     name: 'TreatmentTemplate',
     component: () => import ('@/views/Patients/HCP/TreatmentTemplate.vue'),
     meta: {
@@ -191,7 +191,7 @@ const routes = [
     }
   },
   {
-    path: '/dashboard/discharge-templates',
+    path: '/dashboard/templates/discharge-templates',
     name: 'DischargeTemplate',
     component: () => import ('@/views/Patients/HCP/DischargeTemplate.vue'),
     meta: {
@@ -201,9 +201,19 @@ const routes = [
     }
   },
   {
-    path: '/dashboard/evaluation-templates',
+    path: '/dashboard/templates/evaluation-templates',
     name: 'EvaluationTemplate',
     component: () => import ('@/views/Patients/HCP/EvaluationTemplate.vue'),
+    meta: {
+      requiresAuth: true,
+      requiresAdminHCP: true,
+      layout: ProtectedLayout,
+    }
+  },
+  {
+    path: '/dashboard/templates/referral-templates',
+    name: 'ReferralTemplate',
+    component: () => import ('@/views/Patients/HCP/ReferralTemplate.vue'),
     meta: {
       requiresAuth: true,
       requiresAdminHCP: true,
@@ -214,6 +224,16 @@ const routes = [
     path: "/:pathMatch(.*)*",
     name: "notFound",
     component: () => import("@/views/NotFound.vue"),
+  },
+  {
+    path: '/dashboard/templates',
+    name: 'AllTemplates',
+    component: AllTemplates,
+    meta: {
+      requiresAuth: true,
+      requiresAdminHCP: true,
+      layout: ProtectedLayout,
+    }
   },
 ];
 

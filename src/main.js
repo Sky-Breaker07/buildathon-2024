@@ -8,6 +8,11 @@ import { createPinia } from "pinia";
 import App from "./App.vue";
 import router from "./router";
 
+import { OhVueIcon, addIcons } from "oh-vue-icons";
+import { RiClipboardLine, RiMedicineBottleLine, RiDoorOpenLine, RiFileTextLine, RiArrowRightLine } from "oh-vue-icons/icons";
+
+addIcons(RiClipboardLine, RiMedicineBottleLine, RiDoorOpenLine, RiFileTextLine, RiArrowRightLine);
+
 const app = createApp(App);
 
 app.use(createPinia());
@@ -33,6 +38,8 @@ app.use(Toast, {
   bodyClassName: "", // Custom CSS class for toast body
   containerClassName: "", // Custom CSS class for toast container
 });
+
+app.component("v-icon", OhVueIcon);
 
 app.mount("#app");
 
