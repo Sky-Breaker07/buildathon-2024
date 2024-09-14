@@ -80,7 +80,7 @@
 						</button>
 					</th>
 					<th
-						class="text-left p-2 border font-semibold text-offWhiteAlt"
+						class="text-left p-2 border-y font-semibold text-offWhiteAlt"
 					>
 						Actions
 					</th>
@@ -92,14 +92,16 @@
 					:key="patient._id"
 					class="hover:bg-gray-50"
 				>
-					<td class="p-4 border-b">{{ patient.biodata.name }}</td>
-					<td class="p-4 border-b">
+					<td class="pl-2 p-4 border-b">
+						{{ patient.biodata.name }}
+					</td>
+					<td class="pl-2 p-4 border-b">
 						{{ patient.hospital_record.hospital_id }}
 					</td>
-					<td class="p-4 border-b">
+					<td class="pl-2 p-4 border-b">
 						{{ formatDate(patient.biodata.createdAt) }}
 					</td>
-					<td class="p-4 border-b">
+					<td class="pl-2 p-4 border-b">
 						<router-link
 							:to="{
 								name: 'PatientDetails',

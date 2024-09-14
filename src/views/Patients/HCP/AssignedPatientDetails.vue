@@ -1,5 +1,5 @@
 <template>
-	<div class="p-8 max-w-6xl mx-auto min-h-screen">
+	<div class="p-8 max-w-6xl mx-auto min-h-screen font-poppins">
 		<BackButton class="pt-2 pb-4" />
 		<h1 class="text-4xl font-bold mb-6 text-center text-indigo-800">
 			Patient Profile
