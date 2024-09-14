@@ -21,33 +21,26 @@
 					{{ organizationName }}
 				</p>
 
-				<div class="header__btns">
-					<ButtonComponent
-						v-if="!currentUser"
-						text="Login"
-					/>
-
-					<div
-						v-else
-						class="flex items-center gap-2"
+				<div
+					v-if="currentUser"
+					class="flex items-center gap-2"
+				>
+					<router-link
+						to="/dashboard"
+						title="Dashboard"
+						class="w-[2.375rem] h-[2.375rem] rounded-full text-clrOffWhite hover:text-offWhiteAlt transition-colors duration-500 ease"
 					>
-						<router-link
-							to="/dashboard"
-							title="Dashboard"
-							class="w-[2.875rem] h-[2.875rem] rounded-full text-clrOffWhite hover:text-offWhiteAlt transition-colors duration-500 ease"
-						>
-							<i class="bx bxs-dashboard text-[2.875rem]"></i
-						></router-link>
-						<button
-							title="Settings"
-							class="w-[2.875rem] h-[2.875rem] rounded-full text-clrOffWhite hover:text-offWhiteAlt transition-colors duration-500 ease"
-							@click="
-								isSettingsDropdownOpen = !isSettingsDropdownOpen
-							"
-						>
-							<i class="bx bx-cog text-[2.875rem]"></i>
-						</button>
-					</div>
+						<i class="bx bxs-dashboard text-[2.375rem]"></i
+					></router-link>
+					<button
+						title="Settings"
+						class="w-[2.375rem] h-[2.375rem] rounded-full text-clrOffWhite hover:text-offWhiteAlt transition-colors duration-500 ease"
+						@click="
+							isSettingsDropdownOpen = !isSettingsDropdownOpen
+						"
+					>
+						<i class="bx bx-cog text-[2.375rem]"></i>
+					</button>
 				</div>
 			</nav>
 
@@ -63,7 +56,6 @@
 	import { computed, ref } from 'vue';
 	import { useStaffStore } from '../stores/staff-management';
 	import { storeToRefs } from 'pinia';
-	import ButtonComponent from './ButtonComponent.vue';
 	import SettingsDropdown from './SettingsDropdown.vue';
 
 	const staffStore = useStaffStore();
