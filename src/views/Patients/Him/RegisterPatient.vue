@@ -1,4 +1,5 @@
 <template>
+	<BackButton class="pt-2 pb-4" />
 	<form
 		@submit.prevent="handleSubmit"
 		class="px-[2.175rem]"
@@ -270,6 +271,7 @@
 	import { registerPatient } from '@/utils/patientManagement';
 	import LoadingModal from '@/components/LoadingModal.vue';
 	import { useToast } from 'vue-toastification';
+	import BackButton from '@/components/BackButton.vue';
 
 	const router = useRouter();
 	const patientStore = usePatientStore();

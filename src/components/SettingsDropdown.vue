@@ -25,7 +25,7 @@
 	const router = useRouter();
 	const toast = useToast();
 
-	const props = defineProps({
+	defineProps({
 		isOpen: {
 			type: Boolean,
 			required: true,

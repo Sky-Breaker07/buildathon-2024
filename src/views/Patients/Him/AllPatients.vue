@@ -1,5 +1,6 @@
 <template>
 	<StaffDashBoardHeader />
+	<BackButton />
 	<div class="p-8">
 		<h1 class="font-poppins text-3xl font-bold mb-6">All Patients</h1>
 
@@ -151,6 +152,7 @@
 	import { usePatientStore } from '@/stores/patient-management';
 	import { getAllPatients } from '@/utils/patientManagement';
 	import StaffDashBoardHeader from '@/components/StaffDashBoardHeader.vue';
+	import BackButton from '@/components/BackButton.vue';
 
 	const patientStore = usePatientStore();
 
