@@ -1,7 +1,18 @@
 import apiClient from "../apiConfig";
 
-const registerPatient = (patientData) => {
-  return apiClient.post("/api/v1/patients/register", patientData);
+// conversion of local datetime to iso 8601
+const convertToISO = (date) => {
+  const isoDate = new Date(date).toISOString();
+  return String(isoDate);
+};
+
+const registerPatient = (bioDataInfo, appointmentInfo, patientType) => {
+  const appointmentDateTime = convertToISO(appointmentInfo);
+  return apiClient.post("/api/v1/patients/register", {
+    bioDataInfo: bioDataInfo,
+    appointmentInfo: appointmentDateTime,
+    patientType: patientType,
+  });
 };
 
 const getHospitalRecord = (hospitalId) => {
@@ -180,6 +191,37 @@ const getPatientFullDetails = (hospitalId) => {
   });
 };
 
+const createAppointment = (hospitalId, appointmentDateTime) => {
+  appointmentDateTime = convertToISO(appointmentDateTime);
+  return apiClient.post("/api/v1/patients/appointment", {
+    hospital_id: hospitalId,
+    appointmentDateTime: appointmentDateTime,
+  });
+};
+
+const cancelAppointment = (hospitalId, appointmentId) => {
+  return apiClient.post("/api/v1/patients/cancel-appointment", {
+    hospital_id: hospitalId,
+    appointmentId: appointmentId,
+  });
+};
+
+const rescheduleAppointment = (hospitalId, appointmentId, newAppointmentDateTime) => {
+  newAppointmentDateTime = convertToISO(newAppointmentDateTime);
+  return apiClient.post("/api/v1/patients/reschedule-appointment", {
+    hospital_id: hospitalId,
+    appointmentId: appointmentId,
+    newAppointmentDateTime: newAppointmentDateTime,
+  });
+};
+
+const completeAppointment = (hospitalId, appointmentId) => {
+  return apiClient.post("/api/v1/patients/complete-appointment", {
+    hospital_id: hospitalId,
+    appointmentId: appointmentId,
+  });
+};
+
 export {
   registerPatient,
   getHospitalRecord,
@@ -202,4 +244,8 @@ export {
   updateSessionCount,
   createVitals,
   getPatientFullDetails,
+  createAppointment,
+  cancelAppointment,
+  rescheduleAppointment,
+  completeAppointment,
 };

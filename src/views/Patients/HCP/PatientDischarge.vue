@@ -1,4 +1,5 @@
 <template>
+  <BackButton class="pt-4 pb-2" />
     <div class="min-h-screen bg-gray-100 py-12 px-4 sm:px-6 lg:px-8">
       <div class="max-w-7xl mx-auto">
         <h1 class="text-4xl font-extrabold text-gray-900 mb-8">
@@ -364,6 +365,7 @@
   import { getDischargeTemplatesByProfession } from "@/utils/dischargeTemplate";
   import { createDischarge, getPatient } from "@/utils/patientManagement";
   import LoadingModal from "@/components/LoadingModal.vue";
+  import BackButton from "@/components/BackButton.vue";
   
   const router = useRouter();
   const route = useRoute();

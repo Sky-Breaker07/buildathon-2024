@@ -121,6 +121,16 @@ const routes = [
     },
   },
   {
+    path: "/dashboard/assigned/:hospital_id/appointments",
+    name: "Appointments",
+    component: () => import("@/views/Patients/HCP/PatientAppointment.vue"),
+    meta: {
+      requiresAuth: true,
+      requiresHCP: true,
+      layout: ProtectedLayout,
+    },
+  },
+  {
     path: "/dashboard/assigned/:hospital_id/assessments",
     name: "Assessment",
     component: () => import("@/views/Patients/HCP/PatientAssessment.vue"),

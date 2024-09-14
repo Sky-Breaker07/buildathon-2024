@@ -134,6 +134,7 @@
 				<router-link
 					v-for="section in [
 						'vitalsigns',
+						'appointments',
 						'assessments',
 						'treatments',
 						'discharges',
