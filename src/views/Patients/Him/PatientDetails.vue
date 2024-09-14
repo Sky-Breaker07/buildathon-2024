@@ -1,5 +1,5 @@
 <template>
-	<div class="p-8 max-w-6xl mx-auto min-h-screen">
+	<div class="p-8 max-w-6xl mx-auto min-h-screen font-poppins">
 		<BackButton class="pb-4 pt-2" />
 		<h1 class="text-4xl font-bold mb-6 text-center text-indigo-800">
 			Patient Profile
@@ -29,7 +29,7 @@
 					</h2>
 					<button
 						@click="toggleEditMode"
-						class="bg-indigo-500 text-white px-6 py-2 rounded-full hover:bg-indigo-600 transform hover:scale-110 transition-all duration-300"
+						class="font-poppins bg-indigo-500 text-white px-6 py-2 rounded-full hover:bg-indigo-600 transform hover:scale-110 transition-all duration-300"
 					>
 						{{ isEditing ? 'Cancel' : 'Edit' }}
 					</button>
