@@ -57,6 +57,21 @@ const assignPatientToHCP = (hospitalId, staffId, token) => {
   );
 };
 
+const unassignPatientFromHCP = (hospitalId, staffId, token) => {
+  return apiClient.post(
+    "/api/v1/patients/unassign-patient",
+    {
+      hospital_id: hospitalId,
+      staffId: staffId,
+    },
+    {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    }
+  );
+};
+
 const createDischarge = (template_id, discharge_data, hospital_id) => {
   return apiClient.post("/api/v1/patients/discharge", {
     template_id: template_id,
@@ -78,6 +93,7 @@ const updatePatientInfo = (updateData) => {
 };
 
 const transferPatient = (hospitalId, receiverStaffId, token) => {
+  console.log(hospitalId, receiverStaffId, token);
   return apiClient.post(
     "/api/v1/patients/transfer-patient",
     {
@@ -171,6 +187,7 @@ export {
   createAssessment,
   createTreatment,
   assignPatientToHCP,
+  unassignPatientFromHCP,
   createDischarge,
   createEvaluation,
   createReferral,

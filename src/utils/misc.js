@@ -10,4 +10,4 @@ export const warmUp = async () => {
         console.error("Warm up error:", error);
         throw error;
     }
-}
+};

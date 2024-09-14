@@ -9,9 +9,37 @@ import App from "./App.vue";
 import router from "./router";
 
 import { OhVueIcon, addIcons } from "oh-vue-icons";
-import { RiClipboardLine, RiMedicineBottleLine, RiDoorOpenLine, RiFileTextLine, RiArrowRightLine } from "oh-vue-icons/icons";
+import {
+  RiClipboardLine,
+  RiMedicineBottleLine,
+  RiDoorOpenLine,
+  RiFileTextLine,
+  RiArrowRightLine,
+  RiUserUnfollowLine,
+  RiCheckLine,
+  RiCloseLine,
+  RiUserFollowLine,
+  RiEditLine,
+  RiHospitalLine,
+  RiCalendarLine,
+  RiUserAddLine
+} from "oh-vue-icons/icons";
 
-addIcons(RiClipboardLine, RiMedicineBottleLine, RiDoorOpenLine, RiFileTextLine, RiArrowRightLine);
+addIcons(
+  RiClipboardLine,
+  RiMedicineBottleLine,
+  RiDoorOpenLine,
+  RiFileTextLine,
+  RiArrowRightLine,
+  RiUserUnfollowLine,
+  RiCheckLine,
+  RiCloseLine,
+  RiUserFollowLine,
+  RiEditLine,
+  RiHospitalLine,
+  RiCalendarLine,
+  RiUserAddLine // Changed from RiUserTransferLine
+);
 
 const app = createApp(App);
 
