@@ -51,7 +51,10 @@
 				</div>
 			</nav>
 
-			<SettingsDropdown v-if="isSettingsDropdownOpen" />
+			<SettingsDropdown
+				:isOpen="isSettingsDropdownOpen"
+				@close="isSettingsDropdownOpen = false"
+			/>
 		</div>
 	</header>
 </template>
