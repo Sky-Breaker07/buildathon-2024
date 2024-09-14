@@ -108,7 +108,7 @@
 				>
 					<div class="bg-white px-4 pt-5 pb-4 sm:p-6 sm:pb-4">
 						<h3
-							class="text-lg leading-6 font-medium text-gray-900"
+							class="text-lg leading-6 font-medium text-gray-900 font-poppins"
 							id="modal-title"
 						>
 							Reset Password
@@ -118,11 +118,11 @@
 								type="text"
 								v-model="resetStaffId"
 								placeholder="Staff ID"
-								class="mt-1 block w-full px-3 py-2 bg-white border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
+								class="font-poppins mt-1 block w-full px-3 py-2 bg-white border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
 							/>
 							<select
 								v-model="selectedSecurityQuestion"
-								class="mt-1 block w-full px-3 py-2 bg-white border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
+								class="font-poppins mt-1 block w-full px-3 py-2 bg-white border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
 							>
 								<option value="">
 									Select Security Question
@@ -139,24 +139,24 @@
 								type="text"
 								v-model="securityAnswer"
 								placeholder="Security Answer"
-								class="mt-1 block w-full px-3 py-2 bg-white border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
+								class="font-poppins mt-1 block w-full px-3 py-2 bg-white border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
 							/>
 							<input
 								type="password"
 								v-model="newPassword"
 								placeholder="New Password"
-								class="mt-1 block w-full px-3 py-2 bg-white border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
+								class="font-poppins mt-1 block w-full px-3 py-2 bg-white border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
 							/>
 						</div>
 					</div>
 					<div
-						class="bg-gray-50 px-4 py-3 sm:px-6 sm:flex sm:flex-row-reverse"
+						class="bg-gray-50 px-4 py-3 sm:px-6 sm:flex sm:flex-row-reverse font-poppins"
 					>
 						<button
 							type="button"
 							@click="handleResetPassword"
 							:disabled="isLoading"
-							class="w-full inline-flex justify-center rounded-md border border-transparent shadow-sm px-4 py-2 bg-indigo-600 text-base font-medium text-white hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 sm:ml-3 sm:w-auto sm:text-sm"
+							class="font-poppins w-full inline-flex justify-center rounded-md border border-transparent shadow-sm px-4 py-2 bg-indigo-600 text-base font-medium text-white hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 sm:ml-3 sm:w-auto sm:text-sm"
 						>
 							<span v-if="!isLoading">Reset Password</span>
 							<span
