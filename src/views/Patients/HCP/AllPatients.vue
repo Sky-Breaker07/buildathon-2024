@@ -1,7 +1,14 @@
 <template>
+<<<<<<< HEAD
   <StaffDashBoardHeader />
   <div class="w-[90rem] mx-auto px-[2.175rem] py-8">
     <h1 class="font-poppins text-3xl font-bold mb-6">All Patients</h1>
+=======
+	<StaffDashBoardHeader />
+	<BackButton />
+	<div class="w-[90rem] mx-auto px-[2.175rem] py-8">
+		<h1 class="font-poppins text-3xl font-bold mb-6">All Patients</h1>
+>>>>>>> 107a112697d8319b647c26749ebdcbaf00dbd281
 
     <!-- Search and Filter -->
     <div class="mb-6 flex space-x-4">
@@ -264,6 +271,7 @@
 </template>
 
 <script setup>
+<<<<<<< HEAD
 import { ref, computed, onMounted } from "vue";
 import { useRouter } from "vue-router";
 import { useStaffStore } from "@/stores/staff-management";
@@ -280,6 +288,24 @@ import { getToken } from "@/utils/tokenUtils";
 import { useToast } from "vue-toastification";
 import LoadingModal from "@/components/LoadingModal.vue";
 import StaffDashBoardHeader from "@/components/StaffDashBoardHeader.vue";
+=======
+	import { ref, computed, onMounted } from 'vue';
+	import { useRouter } from 'vue-router';
+	import { useStaffStore } from '@/stores/staff-management';
+	import { usePatientStore } from '@/stores/patient-management';
+	import {
+		getAdminJurisdictionPatients,
+		acceptPatient,
+		rejectPatient,
+		assignPatientToHCP,
+	} from '@/utils/patientManagement';
+	import { getHCPsByProfession } from '@/utils/staffManagement';
+	import { getToken } from '@/utils/tokenUtils';
+	import { useToast } from 'vue-toastification';
+	import LoadingModal from '@/components/LoadingModal.vue';
+	import StaffDashBoardHeader from '@/components/StaffDashBoardHeader.vue';
+	import BackButton from '@/components/BackButton.vue';
+>>>>>>> 107a112697d8319b647c26749ebdcbaf00dbd281
 
 const router = useRouter();
 const staffStore = useStaffStore();

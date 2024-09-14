@@ -1,6 +1,7 @@
 <template>
 	<ul
-		class="w-[10rem] min-h-[2rem] absolute -right-14 top-20 bg-clrWhite rounded-lg"
+		v-if="isOpen"
+		class="w-[10rem] min-h-[2rem] absolute -right-14 top-20 bg-white rounded-lg shadow"
 	>
 		<li class="px-4 py-2">
 			<router-link
@@ -23,8 +24,19 @@
 	const staffStore = useStaffStore();
 	const router = useRouter();
 	const toast = useToast();
+
+	defineProps({
+		isOpen: {
+			type: Boolean,
+			required: true,
+		},
+	});
+
+	const emit = defineEmits(['close']);
+
 	const logout = async () => {
 		try {
+			emit('close');
 			removeToken();
 			staffStore.clearStaffData();
 			router.push('/login');
