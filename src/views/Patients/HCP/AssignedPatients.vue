@@ -65,6 +65,7 @@
 									:to="`/dashboard/assigned/${patient.hospital_record.hospital_id}`"
 									class="bg-clrBlue text-clrWhite transition duration-500 ease-in-out hover:bg-indigo-700 px-4 py-2 rounded-md"
 								>
+									<v-icon name="ri-file-text-line" class="mr-2" />
 									Access File
 								</router-link>
 							</td>
