@@ -85,7 +85,8 @@
 		<!-- Add this new section for Staff Statistics -->
 		<div
 			v-if="
-				(isSuperAdmin && staffStats.admins.length !== 0) ||
+				(isSuperAdmin &&
+					staffStats.healthCareProfessionals.admins.length !== 0) ||
 				staffStats.healthInfoManagers.length !== 0
 			"
 			class="mt-8"
