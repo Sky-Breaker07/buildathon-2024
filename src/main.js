@@ -22,7 +22,12 @@ import {
   RiEditLine,
   RiHospitalLine,
   RiCalendarLine,
-  RiUserAddLine
+  RiUserAddLine,
+  RiDeleteBinLine,
+  RiAddLine,
+  RiPencilLine,
+  RiCheckboxCircleLine,
+  RiLoader4Line
 } from "oh-vue-icons/icons";
 
 addIcons(
@@ -38,7 +43,12 @@ addIcons(
   RiEditLine,
   RiHospitalLine,
   RiCalendarLine,
-  RiUserAddLine // Changed from RiUserTransferLine
+  RiUserAddLine,
+  RiDeleteBinLine,
+  RiAddLine,
+  RiPencilLine,
+  RiCheckboxCircleLine,
+  RiLoader4Line
 );
 
 const app = createApp(App);

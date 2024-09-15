@@ -1,5 +1,5 @@
 <template>
-  <div class="field-builder space-y-4">
+  <div class="field-builder space-y-4 p-4 bg-white rounded-lg shadow-md">
     <div class="flex justify-between items-center">
       <select 
         :value="field.type" 
@@ -9,7 +9,7 @@
         <option v-for="type in fieldTypes" :key="type" :value="type">{{ type }}</option>
       </select>
       <button @click="$emit('remove')" class="text-red-500 hover:text-red-700 transition-colors duration-300">
-        <i class="fas fa-times"></i>
+        <v-icon name="ri-close-line" />
       </button>
     </div>
     
@@ -21,7 +21,7 @@
         placeholder="Field Label" 
       />
       <span class="absolute left-3 top-3 text-indigo-500">
-        <i class="fas fa-tag"></i>
+        <v-icon name="ri-edit-line" />
       </span>
     </div>
     
@@ -32,7 +32,10 @@
         @change="updateField('required', $event.target.checked)" 
         class="mr-2 h-5 w-5 text-indigo-600 focus:ring-indigo-500 border-gray-300 rounded"
       />
-      <label class="text-gray-700">Required</label>
+      <label class="text-gray-700 flex items-center">
+        <v-icon name="ri-checkbox-circle-line" class="mr-1" />
+        Required
+      </label>
     </div>
     
     <div class="relative">
@@ -43,7 +46,7 @@
         placeholder="Placeholder" 
       />
       <span class="absolute left-3 top-3 text-indigo-500">
-        <i class="fas fa-font"></i>
+        <v-icon name="ri-file-text-line" />
       </span>
     </div>
     
@@ -56,11 +59,11 @@
           placeholder="Option" 
         />
         <button @click="removeOption(index)" class="ml-2 text-red-500 hover:text-red-700 transition-colors duration-300">
-          <i class="fas fa-minus"></i>
+          <v-icon name="ri-delete-bin-line" />
         </button>
       </div>
       <button @click="addOption" class="mt-1 px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition-colors duration-300 flex items-center">
-        <i class="fas fa-plus mr-2"></i> Add Option
+        <v-icon name="ri-add-line" class="mr-2" /> Add Option
       </button>
     </div>
     
@@ -72,18 +75,19 @@
         placeholder="Default Value" 
       />
       <span class="absolute left-3 top-3 text-indigo-500">
-        <i class="fas fa-pencil-alt"></i>
+        <v-icon name="ri-pencil-line" />
       </span>
     </div>
   </div>
 </template>
 
 <script setup>
+import { ref } from 'vue';
 
 const props = defineProps(['field']);
 const emit = defineEmits(['remove', 'update:field']);
 
-const fieldTypes = ['String', 'Number', 'Boolean', 'Array', 'Date', 'Object'];
+const fieldTypes = ref(['String', 'Number', 'Boolean', 'Array', 'Date', 'Object']);
 
 const updateField = (key, value) => {
   emit('update:field', { ...props.field, [key]: value });
