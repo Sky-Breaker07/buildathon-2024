@@ -31,20 +31,24 @@
       Continue to Login
     </button>
   </div>
+  <LoadingModal ref="loadingModal" />
 </template>
 
 <script setup>
 import { ref, onMounted } from "vue";
 import { useRouter } from "vue-router";
 import RegisterSuperAdmin from "../components/RegisterSuperAdmin.vue";
+import LoadingModal from "../components/LoadingModal.vue";
 import { checkSuperAdminExists } from "../utils/staffManagement";
 
 const router = useRouter();
 const registrationComplete = ref(false);
 const staffId = ref("");
 const staffIdInput = ref(null);
+const loadingModal = ref(null);
 
 onMounted(async () => {
+  loadingModal.value.show();
   try {
     const superAdminExists = await checkSuperAdminExists();
     if (superAdminExists) {
@@ -53,6 +57,8 @@ onMounted(async () => {
   } catch (error) {
     console.error("Error checking Super Admin existence:", error);
     // You might want to show an error message to the user here
+  } finally {
+    loadingModal.value.hide();
   }
 });
 
@@ -62,11 +68,14 @@ const handleRegistrationComplete = (data) => {
 };
 
 const copyStaffId = async () => {
+  loadingModal.value.show();
   try {
     await navigator.clipboard.writeText(staffId.value);
     alert("Staff ID copied to clipboard!");
   } catch (err) {
     console.error("Failed to copy: ", err);
+  } finally {
+    loadingModal.value.hide();
   }
 };
 
