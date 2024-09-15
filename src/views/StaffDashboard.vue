@@ -84,11 +84,7 @@
 
 		<!-- Add this new section for Staff Statistics -->
 		<div
-			v-if="
-				(isSuperAdmin &&
-					staffStats.healthCareProfessionals.admins.length !== 0) ||
-				staffStats.healthInfoManagers.length !== 0
-			"
+			v-if="isSuperAdmin && staffStats"
 			class="mt-8"
 		>
 			<h2 class="font-poppins text-2xl font-semibold mb-4">
