@@ -33,7 +33,7 @@ const props = defineProps({
   colorScheme: {
     type: String,
     default: 'blue',
-    validator: (value) => ['blue', 'green', 'purple', 'red', 'yellow'].includes(value)
+    validator: (value) => ['blue', 'green', 'red', 'yellow', 'purple', 'indigo', 'teal'].includes(value)
   }
 });
 

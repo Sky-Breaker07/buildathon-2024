@@ -70,6 +70,22 @@
 				@click="goToAssignedPatients"
 				colorScheme="yellow"
 			/>
+
+			<!-- Add this card for Patient Statistics -->
+			<DashboardCard
+				v-if="isHIM || isSuperAdmin || isAdminHCP"
+				icon="chart-bar"
+				title="Patient Statistics"
+				subtitle="View detailed patient statistics"
+				@click="goToPatientStats"
+				colorScheme="indigo"
+			/>
+		</div>
+
+		<!-- Add this new section for Staff Statistics -->
+		<div v-if="isSuperAdmin && staffStats" class="mt-8">
+			<h2 class="text-2xl font-semibold mb-4">Staff Statistics</h2>
+			<StaffStatisticsCards :staffStats="staffStats" />
 		</div>
 	</div>
 	<div
@@ -90,6 +106,8 @@
 	import { useToast } from 'vue-toastification';
 	import StaffDashBoardHeader from '@/components/StaffDashBoardHeader.vue';
 	import DashboardCard from '@/components/DashboardCards.vue';
+	import StaffStatisticsCards from '@/components/StaffStatisticsCards.vue';
+	import staffStatsUtil from '@/utils/staffStats';
 
 	const router = useRouter();
 	const staffStore = useStaffStore();
@@ -130,9 +148,27 @@
 		return '';
 	});
 
+	const staffStats = ref(null);
+
 	onMounted(async () => {
 		await fetchCurrentUser();
+		if (isSuperAdmin.value) {
+			await fetchStaffStatistics();
+		}
 	});
+
+	const fetchStaffStatistics = async () => {
+		try {
+			loadingModal.value.show();
+			const response = await staffStatsUtil.getStaffStatistics();
+			staffStats.value = response;
+		} catch (error) {
+			console.error('Error fetching staff statistics:', error);
+			toast.error('Failed to fetch staff statistics. Please try again.');
+		} finally {
+			loadingModal.value.hide();
+		}
+	};
 
 	const goToAdminSetup = async () => {
 		try {
@@ -268,6 +304,23 @@
 			router.push('/login');
 		} finally {
 			loadingModal.value.hide();
+		}
+	};
+
+	// Add this method in the <script setup> section
+	const goToPatientStats = async () => {
+		try {
+			if (loadingModal.value) {
+				loadingModal.value.show();
+			}
+			await router.push('/dashboard/patient-stats');
+		} catch (error) {
+			console.error('Error navigating to Patient Statistics:', error);
+			toast.error('Failed to navigate to Patient Statistics. Please try again.');
+		} finally {
+			if (loadingModal.value) {
+				loadingModal.value.hide();
+			}
 		}
 	};
 </script>

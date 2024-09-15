@@ -8,49 +8,6 @@ import { createPinia } from "pinia";
 import App from "./App.vue";
 import router from "./router";
 
-import { OhVueIcon, addIcons } from "oh-vue-icons";
-import {
-  RiClipboardLine,
-  RiMedicineBottleLine,
-  RiDoorOpenLine,
-  RiFileTextLine,
-  RiArrowRightLine,
-  RiUserUnfollowLine,
-  RiCheckLine,
-  RiCloseLine,
-  RiUserFollowLine,
-  RiEditLine,
-  RiHospitalLine,
-  RiCalendarLine,
-  RiUserAddLine,
-  RiDeleteBinLine,
-  RiAddLine,
-  RiPencilLine,
-  RiCheckboxCircleLine,
-  RiLoader4Line
-} from "oh-vue-icons/icons";
-
-addIcons(
-  RiClipboardLine,
-  RiMedicineBottleLine,
-  RiDoorOpenLine,
-  RiFileTextLine,
-  RiArrowRightLine,
-  RiUserUnfollowLine,
-  RiCheckLine,
-  RiCloseLine,
-  RiUserFollowLine,
-  RiEditLine,
-  RiHospitalLine,
-  RiCalendarLine,
-  RiUserAddLine,
-  RiDeleteBinLine,
-  RiAddLine,
-  RiPencilLine,
-  RiCheckboxCircleLine,
-  RiLoader4Line
-);
-
 const app = createApp(App);
 
 app.use(createPinia());
@@ -77,9 +34,49 @@ app.use(Toast, {
   containerClassName: "", // Custom CSS class for toast container
 });
 
-app.component("v-icon", OhVueIcon);
+// Asynchronously load and register icons
+const loadIcons = async () => {
+  const { OhVueIcon, addIcons } = await import("oh-vue-icons");
+  const icons = await import("oh-vue-icons/icons");
 
+  const iconList = [
+    icons.RiClipboardLine,
+    icons.RiMedicineBottleLine,
+    icons.RiDoorOpenLine,
+    icons.RiFileTextLine,
+    icons.RiArrowRightLine,
+    icons.RiUserUnfollowLine,
+    icons.RiCheckLine,
+    icons.RiCloseLine,
+    icons.RiUserFollowLine,
+    icons.RiEditLine,
+    icons.RiHospitalLine,
+    icons.RiCalendarLine,
+    icons.RiUserAddLine,
+    icons.RiDeleteBinLine,
+    icons.RiAddLine,
+    icons.RiPencilLine,
+    icons.RiCheckboxCircleLine,
+    icons.RiLoader4Line,
+    icons.RiUserLine,
+    icons.RiUserStarLine,
+    icons.RiMenLine,
+    icons.RiBriefcaseLine,
+    icons.RiHeart2Line,
+    icons.RiBarChartBoxLine,
+    icons.RiSearchLine,
+    icons.RiFileSearchLine,
+    icons.RiStethoscopeLine,
+    icons.RiHeartPulseLine,
+    icons.BiRadioactive,
+  ];
+
+  addIcons(...iconList);
+  app.component("v-icon", OhVueIcon);
+};
+
+// Start loading icons asynchronously
+loadIcons();
+
+// Mount the app immediately, don't wait for icons to load
 app.mount("#app");
-
-
-

@@ -231,11 +231,6 @@ const routes = [
     }
   },
   {
-    path: "/:pathMatch(.*)*",
-    name: "notFound",
-    component: () => import("@/views/NotFound.vue"),
-  },
-  {
     path: '/dashboard/templates',
     name: 'AllTemplates',
     component: AllTemplates,
@@ -244,6 +239,20 @@ const routes = [
       requiresAdminHCP: true,
       layout: ProtectedLayout,
     }
+  },
+  {
+    path: '/dashboard/patient-stats',
+    name: 'PatientStats',
+    component: () => import ('@/views/PatientStats.vue'),
+    meta: {
+      requiresAuth: true,
+      layout: ProtectedLayout,
+    }
+  },
+  {
+    path: "/:pathMatch(.*)*",
+    name: "notFound",
+    component: () => import("@/views/NotFound.vue"),
   },
 ];
 
