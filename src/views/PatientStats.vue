@@ -58,14 +58,14 @@
 			/>
 		</div>
 
-		<div class="mt-12 bg-white shadow-lg rounded-lg p-6">
+		<div class="mt-12 bg-white shadow-lg rounded-lg p-6 font-poppins">
 			<h2 class="text-2xl font-bold mb-4 text-indigo-800">
 				Custom Query
 			</h2>
 			<div class="flex flex-wrap gap-4 mb-4">
 				<select
 					v-model="customQuery.model"
-					class="p-2 border rounded focus:ring-2 focus:ring-indigo-500"
+					class="p-2 border rounded focus:ring-2 focus:ring-indigo-500 font-poppins"
 					@change="updateFieldOptions"
 				>
 					<option
@@ -78,7 +78,7 @@
 				</select>
 				<select
 					v-model="customQuery.field"
-					class="p-2 border rounded focus:ring-2 focus:ring-indigo-500"
+					class="p-2 border rounded focus:ring-2 focus:ring-indigo-500 font-poppins"
 					@change="updateOperatorOptions"
 				>
 					<option
@@ -91,7 +91,7 @@
 				</select>
 				<select
 					v-model="customQuery.operator"
-					class="p-2 border rounded focus:ring-2 focus:ring-indigo-500"
+					class="p-2 border rounded focus:ring-2 focus:ring-indigo-500 font-poppins"
 				>
 					<option
 						v-for="op in currentOperatorOptions"
@@ -106,7 +106,7 @@
 					v-model="customQuery.value"
 					:type="getInputType()"
 					placeholder="Value"
-					class="p-2 border rounded focus:ring-2 focus:ring-indigo-500"
+					class="p-2 border rounded focus:ring-2 focus:ring-indigo-500 font-poppins"
 				/>
 				<div
 					v-else
@@ -118,11 +118,11 @@
 						v-model="customQuery.values[index]"
 						:type="getInputType()"
 						placeholder="Value"
-						class="p-2 border rounded mb-2 focus:ring-2 focus:ring-indigo-500"
+						class="p-2 border rounded mb-2 focus:ring-2 focus:ring-indigo-500 font-poppins"
 					/>
 					<button
 						@click="addValue"
-						class="bg-green-500 text-white px-2 py-1 rounded hover:bg-green-600 transition-colors duration-300"
+						class="bg-green-500 text-white px-2 py-1 rounded hover:bg-green-600 transition-colors duration-300 font-poppins"
 					>
 						<v-icon
 							name="ri-add-line"
@@ -133,7 +133,7 @@
 				</div>
 				<button
 					@click="executeCustomQuery"
-					class="bg-indigo-500 text-white px-4 py-2 rounded hover:bg-indigo-600 transition-colors duration-300"
+					class="bg-indigo-500 text-white px-4 py-2 rounded hover:bg-indigo-600 transition-colors duration-300 font-poppins"
 				>
 					<v-icon
 						name="ri-search-line"
