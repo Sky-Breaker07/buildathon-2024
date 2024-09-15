@@ -186,6 +186,7 @@
 			</div>
 		</div>
 	</div>
+	<LoadingModal ref="loadingModal" />
 </template>
 
 <script setup>
@@ -194,6 +195,7 @@
 	import { registerSuperAdmin } from '../utils/staffManagement';
 
 	import FormField from './FormField.vue';
+	import LoadingModal from './LoadingModal.vue';
 
 	const emit = defineEmits(['registration-complete']);
 	const toast = useToast();
@@ -201,6 +203,7 @@
 	const currentStep = ref(1);
 	const isLoading = ref(false);
 	const errorMessage = ref('');
+	const loadingModal = ref(null);
 
 	const formData = reactive({
 		firstName: '',
@@ -288,6 +291,7 @@
 	};
 
 	const registerSuperAdminHandler = async () => {
+		loadingModal.value.show();
 		isLoading.value = true;
 		errorMessage.value = '';
 		try {
@@ -340,6 +344,7 @@
 			toast.error('Registration failed. Please try again.');
 		} finally {
 			isLoading.value = false;
+			loadingModal.value.hide();
 		}
 	};
 </script>
