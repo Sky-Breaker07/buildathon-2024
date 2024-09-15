@@ -83,7 +83,10 @@
 		</div>
 
 		<!-- Add this new section for Staff Statistics -->
-		<div v-if="isSuperAdmin && staffStats" class="mt-8">
+		<div
+			v-if="isSuperAdmin && staffStats.length !== 0"
+			class="mt-8"
+		>
 			<h2 class="text-2xl font-semibold mb-4">Staff Statistics</h2>
 			<StaffStatisticsCards :staffStats="staffStats" />
 		</div>
@@ -316,7 +319,9 @@
 			await router.push('/dashboard/patient-stats');
 		} catch (error) {
 			console.error('Error navigating to Patient Statistics:', error);
-			toast.error('Failed to navigate to Patient Statistics. Please try again.');
+			toast.error(
+				'Failed to navigate to Patient Statistics. Please try again.'
+			);
 		} finally {
 			if (loadingModal.value) {
 				loadingModal.value.hide();
