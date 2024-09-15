@@ -2,14 +2,84 @@ import "./assets/index.css";
 import "vue-toastification/dist/index.css";
 
 import Toast, { POSITION } from "vue-toastification";
-
 import { createApp } from "vue";
 import { createPinia } from "pinia";
 import App from "./App.vue";
 import router from "./router";
+import { OhVueIcon, addIcons } from "oh-vue-icons";
+import {
+  RiClipboardLine,
+  RiMedicineBottleLine,
+  RiDoorOpenLine,
+  RiFileTextLine,
+  RiArrowRightLine,
+  RiUserUnfollowLine,
+  RiCheckLine,
+  RiCloseLine,
+  RiUserFollowLine,
+  RiEditLine,
+  RiHospitalLine,
+  RiCalendarLine,
+  RiUserAddLine,
+  RiDeleteBinLine,
+  RiAddLine,
+  RiPencilLine,
+  RiCheckboxCircleLine,
+  RiLoader4Line,
+  RiUserLine,
+  RiUserStarLine,
+  RiMenLine,
+  RiBriefcaseLine,
+  RiHeart2Line,
+  RiBarChartBoxLine,
+  RiSearchLine,
+  RiFileSearchLine,
+  RiStethoscopeLine,
+  RiHeartPulseLine,
+  BiRadioactive,
+  RiFacebookFill,
+  RiTwitterFill,
+  RiLinkedinFill,
+} from "oh-vue-icons/icons";
+
+addIcons(
+  RiClipboardLine,
+  RiMedicineBottleLine,
+  RiDoorOpenLine,
+  RiFileTextLine,
+  RiArrowRightLine,
+  RiUserUnfollowLine,
+  RiCheckLine,
+  RiCloseLine,
+  RiUserFollowLine,
+  RiEditLine,
+  RiHospitalLine,
+  RiCalendarLine,
+  RiUserAddLine,
+  RiDeleteBinLine,
+  RiAddLine,
+  RiPencilLine,
+  RiCheckboxCircleLine,
+  RiLoader4Line,
+  RiUserLine,
+  RiUserStarLine,
+  RiMenLine,
+  RiBriefcaseLine,
+  RiHeart2Line,
+  RiBarChartBoxLine,
+  RiSearchLine,
+  RiFileSearchLine,
+  RiStethoscopeLine,
+  RiHeartPulseLine,
+  BiRadioactive,
+  RiFacebookFill,
+  RiTwitterFill,
+  RiLinkedinFill
+);
 
 const app = createApp(App);
 
+app.component("v-icon", OhVueIcon);
 app.use(createPinia());
 app.use(router);
 
@@ -29,54 +99,6 @@ app.use(Toast, {
   transition: "Vue-Toastification__fade", // Transition type
   maxToasts: 5, // Maximum number of toasts to display at once
   newestOnTop: true, // Add new toasts on top
-  toastClassName: "", // Custom CSS class for toasts
-  bodyClassName: "", // Custom CSS class for toast body
-  containerClassName: "", // Custom CSS class for toast container
 });
 
-// Asynchronously load and register icons
-const loadIcons = async () => {
-  const { OhVueIcon, addIcons } = await import("oh-vue-icons");
-  const icons = await import("oh-vue-icons/icons");
-
-  const iconList = [
-    icons.RiClipboardLine,
-    icons.RiMedicineBottleLine,
-    icons.RiDoorOpenLine,
-    icons.RiFileTextLine,
-    icons.RiArrowRightLine,
-    icons.RiUserUnfollowLine,
-    icons.RiCheckLine,
-    icons.RiCloseLine,
-    icons.RiUserFollowLine,
-    icons.RiEditLine,
-    icons.RiHospitalLine,
-    icons.RiCalendarLine,
-    icons.RiUserAddLine,
-    icons.RiDeleteBinLine,
-    icons.RiAddLine,
-    icons.RiPencilLine,
-    icons.RiCheckboxCircleLine,
-    icons.RiLoader4Line,
-    icons.RiUserLine,
-    icons.RiUserStarLine,
-    icons.RiMenLine,
-    icons.RiBriefcaseLine,
-    icons.RiHeart2Line,
-    icons.RiBarChartBoxLine,
-    icons.RiSearchLine,
-    icons.RiFileSearchLine,
-    icons.RiStethoscopeLine,
-    icons.RiHeartPulseLine,
-    icons.BiRadioactive,
-  ];
-
-  addIcons(...iconList);
-  app.component("v-icon", OhVueIcon);
-};
-
-// Start loading icons asynchronously
-loadIcons();
-
-// Mount the app immediately, don't wait for icons to load
 app.mount("#app");

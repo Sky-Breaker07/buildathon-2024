@@ -56,6 +56,18 @@ const removeHCP = async (staffId, token) => {
   });
 };
 
+const checkSuperAdminExists = async () => {
+  try {
+    const response = await apiClient.get('/api/v1/staff/super-admin-exists');
+    return response.data.data.exists;
+  } catch (error) {
+    console.error("Error checking if Super Admin exists:", error);
+    throw new Error("Failed to check if Super Admin exists");
+  }
+};
+
+
+
 const removeAdminHCP = async (staffId, token) => {
   return await apiClient.delete(`/api/v1/staff/admin-hcp/${staffId}`, {
     headers: {
@@ -99,7 +111,8 @@ export {
   removeHCP,
   removeHIM,
   getCurrentUser,
-  removeAdminHCP
+  removeAdminHCP,
+  checkSuperAdminExists
 };
 
 
