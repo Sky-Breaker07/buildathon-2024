@@ -27,7 +27,7 @@
 				:params="{
 					field: 'sex',
 					operator: 'in',
-					value: ['male', 'female'],
+					value: ['Male', 'Female'],
 				}"
 				chartType="bar"
 				icon="ri-men-line"
@@ -51,7 +51,7 @@
 				:params="{
 					field: 'marital_status',
 					operator: 'in',
-					value: ['single', 'married', 'divorced', 'widowed'],
+					value: ['Single', 'Married', 'Divorced', 'Widowed'],
 				}"
 				chartType="bar"
 				icon="ri-heart-2-line"
