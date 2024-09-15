@@ -346,6 +346,8 @@
 			console.error('Error creating vital signs:', error);
 			toast.error('Error recording vital signs');
 		} finally {
+			// reload the page
+			window.location.reload();
 			loadingModal.value.hide();
 		}
 	};
