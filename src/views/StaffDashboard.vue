@@ -87,13 +87,15 @@
 			v-if="isSuperAdmin && staffStats.length !== 0"
 			class="mt-8"
 		>
-			<h2 class="text-2xl font-semibold mb-4">Staff Statistics</h2>
+			<h2 class="font-poppins text-2xl font-semibold mb-4">
+				Staff Statistics
+			</h2>
 			<StaffStatisticsCards :staffStats="staffStats" />
 		</div>
 	</div>
 	<div
 		v-else
-		class="flex items-center justify-center h-screen bg-gray-100"
+		class="flex items-center justify-center h-screen bg-gray-100 font-poppins"
 	>
 		<p class="text-xl text-gray-600">Loading...</p>
 	</div>
