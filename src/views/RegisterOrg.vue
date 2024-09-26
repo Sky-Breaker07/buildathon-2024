@@ -26,7 +26,7 @@
     </div>
     <button
       @click="goToLogin"
-      class="mt-4 inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md font-poppins rounded-md text-clrWhite bg-clrBlue transition duration-500 ease outline-0 hover:bg-indigo-700"
+      class="mt-4 inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium font-poppins rounded-md text-clrWhite bg-clrBlue transition duration-500 ease outline-0 hover:bg-indigo-700"
     >
       Continue to Login
     </button>
@@ -36,12 +36,14 @@
 
 <script setup>
 import { ref, onMounted } from "vue";
+import { useToast } from "vue-toastification";
 import { useRouter } from "vue-router";
 import RegisterSuperAdmin from "../components/RegisterSuperAdmin.vue";
 import LoadingModal from "../components/LoadingModal.vue";
 import { checkSuperAdminExists } from "../utils/staffManagement";
 
 const router = useRouter();
+const toast = useToast();
 const registrationComplete = ref(false);
 const staffId = ref("");
 const staffIdInput = ref(null);
@@ -55,8 +57,8 @@ onMounted(async () => {
       goToLogin();
     }
   } catch (error) {
+  
     console.error("Error checking Super Admin existence:", error);
-    // You might want to show an error message to the user here
   } finally {
     loadingModal.value.hide();
   }
@@ -71,8 +73,9 @@ const copyStaffId = async () => {
   loadingModal.value.show();
   try {
     await navigator.clipboard.writeText(staffId.value);
-    alert("Staff ID copied to clipboard!");
+    toast.success("Staff ID copied to clipboard!");
   } catch (err) {
+    toast.error("Failed to copy Staff ID");
     console.error("Failed to copy: ", err);
   } finally {
     loadingModal.value.hide();
