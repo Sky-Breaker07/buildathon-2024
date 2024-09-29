@@ -6,7 +6,7 @@
         @input="updateField('type', $event.target.value)" 
         class="p-2 border-2 border-indigo-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition-all duration-300"
       >
-        <option v-for="type in fieldTypes" :key="type" :value="type">{{ type }}</option>
+        <option v-for="type in fieldTypes" :key="type.value" :value="type.value">{{ type.label }}</option>
       </select>
       <button @click="$emit('remove')" class="text-red-500 hover:text-red-700 transition-colors duration-300">
         <v-icon name="ri-close-line" />
@@ -18,10 +18,10 @@
         :value="field.label" 
         @input="updateField('label', $event.target.value)" 
         class="w-full p-3 border-2 border-indigo-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition-all duration-300 pl-10"
-        placeholder="Field Label" 
+        :placeholder="sectionName ? `${sectionName} variable` : 'Variable'" 
       />
       <span class="absolute left-3 top-3 text-indigo-500">
-        <v-icon name="ri-edit-line" />
+        <v-icon name="ri-question-line" />
       </span>
     </div>
     
@@ -38,12 +38,12 @@
       </label>
     </div>
     
-    <div class="relative">
+    <div class="relative" v-if="field.type !== 'Boolean'">
       <input 
         :value="field.placeholder" 
         @input="updateField('placeholder', $event.target.value)" 
         class="w-full p-3 border-2 border-indigo-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition-all duration-300 pl-10"
-        placeholder="Placeholder" 
+        placeholder="Placeholder text" 
       />
       <span class="absolute left-3 top-3 text-indigo-500">
         <v-icon name="ri-file-text-line" />
@@ -51,6 +51,7 @@
     </div>
     
     <div v-if="field.type === 'Array'" class="space-y-2">
+      <p class="text-sm font-medium text-gray-700">Options:</p>
       <div v-for="(option, index) in field.options" :key="index" class="flex">
         <input 
           :value="option" 
@@ -67,7 +68,7 @@
       </button>
     </div>
     
-    <div class="relative">
+    <div class="relative" v-if="field.type !== 'Boolean' && field.type !== 'Array'">
       <input 
         :value="field.defaultValue" 
         @input="updateField('defaultValue', $event.target.value)" 
@@ -78,16 +79,37 @@
         <v-icon name="ri-pencil-line" />
       </span>
     </div>
+    
+    <div v-if="field.type === 'Boolean'" class="relative">
+      <select
+        :value="field.defaultValue"
+        @change="updateField('defaultValue', $event.target.value)"
+        class="w-full p-3 border-2 border-indigo-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition-all duration-300 pl-10"
+      >
+        <option value="">Select a value</option>
+        <option value="true">True</option>
+        <option value="false">False</option>
+      </select>
+      <span class="absolute left-3 top-3 text-indigo-500">
+        <v-icon name="ri-toggle-line" />
+      </span>
+    </div>
   </div>
 </template>
 
 <script setup>
 import { ref } from 'vue';
 
-const props = defineProps(['field']);
+const props = defineProps(['field', 'sectionName']);
 const emit = defineEmits(['remove', 'update:field']);
 
-const fieldTypes = ref(['String', 'Number', 'Boolean', 'Array', 'Date', 'Object']);
+const fieldTypes = ref([
+  { value: 'String', label: 'Short Text' },
+  { value: 'Number', label: 'Number' },
+  { value: 'Boolean', label: 'True/False' },
+  { value: 'Array', label: 'Multiple Choice' },
+  { value: 'Date', label: 'Date' }
+]);
 
 const updateField = (key, value) => {
   emit('update:field', { ...props.field, [key]: value });

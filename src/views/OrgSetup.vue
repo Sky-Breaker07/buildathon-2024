@@ -1,6 +1,7 @@
 <template>
   <div class="min-h-screen bg-gray-100">
     <div class="container mx-auto px-4 py-8">
+      <!-- Header and Dashboard button (unchanged) -->
       <div class="flex justify-between items-center mb-6">
         <h2 class="text-3xl font-bold text-gray-900">Organization Setup</h2>
         <button
@@ -11,8 +12,24 @@
         </button>
       </div>
 
+      <!-- New: Instructions Card -->
+      <div class="bg-blue-50 border-l-4 border-blue-500 p-4 mb-6 rounded-md shadow-md">
+        <h3 class="text-lg font-semibold text-blue-700 mb-2">Important Instructions</h3>
+        <p class="text-blue-600 mb-2">
+          For each staff member created:
+        </p>
+        <ul class="list-disc list-inside ml-4 mb-2 text-blue-600">
+          <li>The <strong>staff ID</strong> will be their <strong>username</strong> for login.</li>
+          <li>Their <strong>surname</strong> will be set as the <strong>default password</strong>.</li>
+        </ul>
+        <p class="text-blue-600">
+          Please ensure to communicate these details securely to each staff member and advise them to change their password upon first login.
+        </p>
+      </div>
+
+      <!-- Professions Card (with minor enhancements) -->
       <div class="bg-white shadow-md rounded-lg p-6 mb-6">
-        <h3 class="text-xl font-semibold mb-4">Add Professions</h3>
+        <h3 class="text-xl font-semibold mb-4 text-indigo-700">Manage Professions</h3>
         <div class="flex items-center space-x-4 mb-4">
           <input
             v-model="newProfession"
@@ -27,16 +44,16 @@
             Add
           </button>
         </div>
-        <div class="flex flex-wrap gap-2">
+        <div class="flex flex-wrap gap-2 mt-4">
           <span
             v-for="profession in professions"
             :key="profession"
-            class="px-3 py-1 bg-indigo-100 text-indigo-800 rounded-full text-sm flex items-center"
+            class="px-3 py-1 bg-indigo-100 text-indigo-800 rounded-full text-sm flex items-center transition-all hover:bg-indigo-200"
           >
             {{ profession }}
             <button
               @click="removeProfession(profession)"
-              class="ml-2 text-indigo-600 hover:text-indigo-800 focus:outline-none"
+              class="ml-2 text-indigo-600 hover:text-indigo-800 focus:outline-none transition-colors duration-200"
             >
               <svg
                 class="h-4 w-4"
@@ -57,8 +74,9 @@
         </div>
       </div>
 
+      <!-- Head of Profession Registration (with minor enhancements) -->
       <div class="bg-white shadow-md rounded-lg p-6 mb-6">
-        <h3 class="text-xl font-semibold mb-4">Register Head of Profession</h3>
+        <h3 class="text-xl font-semibold mb-4 text-indigo-700">Register Head of Profession</h3>
         <form @submit.prevent="registerHeadOfProfession" class="space-y-4">
           <div class="grid grid-cols-2 gap-4">
             <input
@@ -97,17 +115,21 @@
               {{ profession }}
             </option>
           </select>
+          <p class="text-sm text-gray-600 italic">
+            Note: The staff ID will be generated automatically and used as the username.
+          </p>
           <button
             type="submit"
-            class="w-full px-4 py-2 bg-indigo-600 text-white rounded-md hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2"
+            class="w-full px-4 py-2 bg-indigo-600 text-white rounded-md hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 transition-colors duration-200"
           >
             Register Head of Profession
           </button>
         </form>
       </div>
 
+      <!-- Health Information Manager Registration (with minor enhancements) -->
       <div class="bg-white shadow-md rounded-lg p-6 mb-6">
-        <h3 class="text-xl font-semibold mb-4">
+        <h3 class="text-xl font-semibold mb-4 text-indigo-700">
           Register Health Information Manager
         </h3>
         <form
@@ -137,17 +159,21 @@
             class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500"
             placeholder="Email"
           />
+          <p class="text-sm text-gray-600 italic">
+            Note: The staff ID will be generated automatically and used as the username.
+          </p>
           <button
             type="submit"
-            class="w-full px-4 py-2 bg-indigo-600 text-white rounded-md hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2"
+            class="w-full px-4 py-2 bg-indigo-600 text-white rounded-md hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 transition-colors duration-200"
           >
             Register Health Information Manager
           </button>
         </form>
       </div>
 
+      <!-- Registered Staff Table (with enhancements) -->
       <div class="bg-white shadow-md rounded-lg p-6">
-        <h3 class="text-xl font-semibold mb-4">Registered Staff</h3>
+        <h3 class="text-xl font-semibold mb-4 text-indigo-700">Registered Staff</h3>
         <div class="overflow-x-auto">
           <table class="min-w-full divide-y divide-gray-200">
             <thead class="bg-gray-50">
@@ -180,7 +206,7 @@
               </tr>
             </thead>
             <tbody class="bg-white divide-y divide-gray-200">
-              <tr v-for="staff in registeredStaff" :key="staff.staff_id">
+              <tr v-for="staff in registeredStaff" :key="staff.staff_id" class="hover:bg-gray-50 transition-colors duration-150">
                 <td
                   class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900"
                 >
@@ -198,7 +224,7 @@
                 <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
                   <button
                     @click="openRemoveModal(staff)"
-                    class="px-2 py-1 bg-red-500 text-white rounded"
+                    class="px-2 py-1 bg-red-500 text-white rounded hover:bg-red-600 transition-colors duration-200"
                   >
                     Remove {{ staff.role === "Health Information Manager" ? "HIM" : "Admin" }}
                   </button>
@@ -209,40 +235,40 @@
         </div>
       </div>
 
-      <!-- Remove Admin Modal -->
+      <!-- Remove Admin Modal (with minor enhancements) -->
       <teleport to="body">
         <div
           v-if="showRemoveModal"
-          class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center"
+          class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50"
         >
-          <div class="bg-white p-4 rounded-lg max-w-md w-full">
-            <h2 class="text-xl font-bold mb-4">Confirm Admin Removal</h2>
+          <div class="bg-white p-6 rounded-lg max-w-md w-full">
+            <h2 class="text-xl font-bold mb-4 text-indigo-700">Confirm Staff Removal</h2>
             <p class="mb-4">
-              Are you sure you want to remove {{ staffToRemove?.name }} as an
-              admin?
+              Are you sure you want to remove {{ staffToRemove?.name }} as 
+              {{ staffToRemove?.role === "Health Information Manager" ? "a Health Information Manager" : "an admin" }}?
             </p>
             <p class="mb-4">
               To confirm, please type the staff ID:
-              <strong>{{ staffToRemove?.staff_id }}</strong>
+              <strong class="text-indigo-600">{{ staffToRemove?.staff_id }}</strong>
             </p>
             <input
               v-model="confirmationInput"
-              class="w-full p-2 border rounded mb-4"
+              class="w-full p-2 border rounded mb-4 focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500"
               placeholder="Type staff ID here"
             />
             <div class="flex justify-end">
               <button
                 @click="closeRemoveModal"
-                class="px-4 py-2 bg-gray-300 rounded mr-2"
+                class="px-4 py-2 bg-gray-300 rounded mr-2 hover:bg-gray-400 transition-colors duration-200"
               >
                 Cancel
               </button>
               <button
                 @click="removeAdmin"
                 :disabled="confirmationInput !== staffToRemove?.staff_id"
-                class="px-4 py-2 bg-red-500 text-white rounded disabled:opacity-50"
+                class="px-4 py-2 bg-red-500 text-white rounded disabled:opacity-50 hover:bg-red-600 transition-colors duration-200"
               >
-                Remove Admin
+                Remove Staff
               </button>
             </div>
           </div>

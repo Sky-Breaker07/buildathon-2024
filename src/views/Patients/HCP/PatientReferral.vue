@@ -205,6 +205,13 @@
                         $event.target.value
                       )
                     "
+                    @change="
+                      updateReferralData(
+                        sectionName,
+                        fieldKey,
+                        $event.target.value
+                      )
+                    "
                     :required="field.required"
                     :placeholder="field.placeholder"
                     v-bind="getFieldAttributes(field.type)"
@@ -219,6 +226,11 @@
                       >
                         {{ option }}
                       </option>
+                    </template>
+                    <template v-if="field.type === 'Boolean'">
+                      <option value="">Select a value</option>
+                      <option value="true">True</option>
+                      <option value="false">False</option>
                     </template>
                   </component>
                 </div>
@@ -431,7 +443,11 @@ const activeTab = ref("new");
 const currentUser = computed(() => staffStore.currentUser);
 
 const updateReferralData = (sectionName, fieldKey, value) => {
-  referralData.value[sectionName][fieldKey] = value;
+  if (selectedTemplate.value.fields[sectionName][fieldKey].type === 'Boolean') {
+    referralData.value[sectionName][fieldKey] = value === 'true';
+  } else {
+    referralData.value[sectionName][fieldKey] = value;
+  }
 };
 
 const capitalizeWord = (str) => {
@@ -625,7 +641,7 @@ const getFieldComponent = (type) => {
     case "Date":
       return "input";
     case "Boolean":
-      return "input";
+      return "select";
     case "Array":
       return "select";
     default:
@@ -642,9 +658,9 @@ const getFieldAttributes = (type) => {
     case "Date":
       return { type: "date" };
     case "Boolean":
-      return { type: "checkbox" };
+      return {};
     case "Array":
-      return {}; // No type attribute for select
+      return {};
     default:
       return { type: "text" };
   }

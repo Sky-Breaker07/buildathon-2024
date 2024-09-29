@@ -196,6 +196,35 @@
       </div>
     </div>
 
+    <div class="mt-8 flex items-center gap-4">
+      <input
+        type="number"
+        v-model="demoPatientCount"
+        min="1"
+        max="100"
+        class="w-20 px-2 py-1 border border-gray-300 rounded"
+      />
+      <button
+        @click="registerDemoPatients"
+        :disabled="isSubmitting || isDemoRegistering"
+        class="px-4 py-2 bg-green-500 text-white rounded hover:bg-green-600 disabled:opacity-50"
+      >
+        Register Demo Patients
+      </button>
+    </div>
+
+    <div v-if="isDemoRegistering" class="mt-4">
+      <p class="text-sm text-gray-600">
+        Registering demo patients: {{ registeredDemoCount }} / {{ demoPatientCount }}
+      </p>
+      <div class="w-full bg-gray-200 rounded-full h-2.5 mt-2">
+        <div
+          class="bg-blue-600 h-2.5 rounded-full"
+          :style="{ width: `${(registeredDemoCount / demoPatientCount) * 100}%` }"
+        ></div>
+      </div>
+    </div>
+
     <div>
       <button
         type="submit"
@@ -237,6 +266,7 @@ import { ref } from "vue";
 import { useRouter } from "vue-router";
 import { usePatientStore } from "@/stores/patient-management";
 import { registerPatient } from "@/utils/patientManagement";
+import { generateDemoPatients } from "@/utils/generateDemoPatients";
 import LoadingModal from "@/components/LoadingModal.vue";
 import { useToast } from "vue-toastification";
 import BackButton from "@/components/BackButton.vue";
@@ -263,6 +293,34 @@ const patientType = ref('')
 
 const isSubmitting = ref(false);
 
+const demoPatientCount = ref(10);
+const isDemoRegistering = ref(false);
+const registeredDemoCount = ref(0);
+
+const registerDemoPatients = async () => {
+  if (isDemoRegistering.value) return;
+
+  try {
+    isDemoRegistering.value = true;
+    registeredDemoCount.value = 0;
+    const demoPatients = generateDemoPatients(demoPatientCount.value);
+
+    for (const demoPatient of demoPatients) {
+      await registerPatient(demoPatient.patient, demoPatient.appointmentDateTime, demoPatient.patientType);
+      registeredDemoCount.value++;
+    }
+
+    toast.success(`Successfully registered ${demoPatientCount.value} demo patients!`);
+    setTimeout(() => {
+      router.push("/patients");
+    }, 2000);
+  } catch (error) {
+    console.error("Error registering demo patients:", error);
+    toast.error("Failed to register demo patients. Please try again.");
+  } finally {
+    isDemoRegistering.value = false;
+  }
+};
 
 const handleSubmit = async () => {
   if (isSubmitting.value) return;

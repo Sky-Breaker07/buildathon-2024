@@ -2,9 +2,21 @@
 <template>
 	<div class="container mx-auto px-4 py-8 font-poppins">
 		<h1 class="text-4xl font-bold mb-8 text-center text-indigo-800">
-			Patient Statistics Dashboard
+			Patient Insights Dashboard
 		</h1>
 
+		<!-- Instructions Card -->
+		<div class="bg-blue-50 border-l-4 border-blue-500 p-4 mb-8 rounded-lg shadow-md">
+			<h2 class="text-xl font-semibold text-blue-800 mb-2">How to Use This Dashboard</h2>
+			<ul class="list-disc list-inside text-blue-700 space-y-1">
+				<li>View pre-defined patient statistics in the cards below</li>
+				<li>Use the "Create Your Own Insight" section to explore custom data</li>
+				<li>Select categories, conditions, and values to filter patient information</li>
+				<li>Click "Generate Insight" to see your custom results</li>
+			</ul>
+		</div>
+
+		<!-- Existing DynamicStatistics components -->
 		<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
 			<DynamicStatistics
 				title="Total Patients"
@@ -58,9 +70,10 @@
 			/>
 		</div>
 
+		<!-- Custom Query Section -->
 		<div class="mt-12 bg-white shadow-lg rounded-lg p-6 font-poppins">
 			<h2 class="text-2xl font-bold mb-4 text-indigo-800">
-				Custom Query
+				Create Your Own Insight
 			</h2>
 			<div class="flex flex-wrap gap-4 mb-4">
 				<select
@@ -68,6 +81,7 @@
 					class="p-2 border rounded focus:ring-2 focus:ring-indigo-500 font-poppins"
 					@change="updateFieldOptions"
 				>
+					<option value="" disabled selected>Select a category</option>
 					<option
 						v-for="model in Object.keys(queryableFields)"
 						:key="model"
@@ -81,6 +95,7 @@
 					class="p-2 border rounded focus:ring-2 focus:ring-indigo-500 font-poppins"
 					@change="updateOperatorOptions"
 				>
+					<option value="" disabled selected>Select a subcategory</option>
 					<option
 						v-for="field in currentFieldOptions"
 						:key="field"
@@ -93,6 +108,7 @@
 					v-model="customQuery.operator"
 					class="p-2 border rounded focus:ring-2 focus:ring-indigo-500 font-poppins"
 				>
+					<option value="" disabled selected>Select a condition</option>
 					<option
 						v-for="op in currentOperatorOptions"
 						:key="op.value"
@@ -105,46 +121,46 @@
 					v-if="!['in', 'nin'].includes(customQuery.operator)"
 					v-model="customQuery.value"
 					:type="getInputType()"
-					placeholder="Value"
+					:placeholder="getPlaceholder()"
 					class="p-2 border rounded focus:ring-2 focus:ring-indigo-500 font-poppins"
 				/>
 				<div
 					v-else
 					class="flex flex-col"
 				>
-					<input
-						v-for="(val, index) in customQuery.values"
-						:key="index"
-						v-model="customQuery.values[index]"
-						:type="getInputType()"
-						placeholder="Value"
-						class="p-2 border rounded mb-2 focus:ring-2 focus:ring-indigo-500 font-poppins"
-					/>
+					<div v-for="(val, index) in customQuery.values" :key="index" class="flex mb-2">
+						<input
+							v-model="customQuery.values[index]"
+							:type="getInputType()"
+							:placeholder="getPlaceholder()"
+							class="p-2 border rounded-l focus:ring-2 focus:ring-indigo-500 font-poppins"
+						/>
+						<button
+							@click="removeValue(index)"
+							class="bg-red-500 text-white px-2 py-1 rounded-r hover:bg-red-600 transition-colors duration-300 font-poppins"
+						>
+							<v-icon name="ri-delete-bin-line" />
+						</button>
+					</div>
 					<button
 						@click="addValue"
 						class="bg-green-500 text-white px-2 py-1 rounded hover:bg-green-600 transition-colors duration-300 font-poppins"
 					>
-						<v-icon
-							name="ri-add-line"
-							class="mr-1"
-						/>
-						Add Value
+						<v-icon name="ri-add-line" class="mr-1" />
+						Add Another Value
 					</button>
 				</div>
 				<button
 					@click="executeCustomQuery"
 					class="bg-indigo-500 text-white px-4 py-2 rounded hover:bg-indigo-600 transition-colors duration-300 font-poppins"
 				>
-					<v-icon
-						name="ri-search-line"
-						class="mr-1"
-					/>
-					Execute Query
+					<v-icon name="ri-search-line" class="mr-1" />
+					Generate Insight
 				</button>
 			</div>
 			<DynamicStatistics
 				v-if="showCustomResult"
-				title="Custom Query Result"
+				title="Your Custom Insight"
 				:statType="getStatType()"
 				:params="getCustomQueryParams()"
 				chartType="pie"
@@ -189,21 +205,21 @@
 		);
 		if (fieldType === 'Number') {
 			return [
-				{ value: 'eq', label: 'Equal' },
-				{ value: 'ne', label: 'Not Equal' },
-				{ value: 'gt', label: 'Greater Than' },
-				{ value: 'gte', label: 'Greater Than or Equal' },
-				{ value: 'lt', label: 'Less Than' },
-				{ value: 'lte', label: 'Less Than or Equal' },
-				{ value: 'in', label: 'In' },
-				{ value: 'nin', label: 'Not In' },
+				{ value: 'eq', label: 'Equal to' },
+				{ value: 'ne', label: 'Not equal to' },
+				{ value: 'gt', label: 'More than' },
+				{ value: 'gte', label: 'At least' },
+				{ value: 'lt', label: 'Less than' },
+				{ value: 'lte', label: 'At most' },
+				{ value: 'in', label: 'Any of' },
+				{ value: 'nin', label: 'None of' },
 			];
 		} else {
 			return [
-				{ value: 'eq', label: 'Equal' },
-				{ value: 'ne', label: 'Not Equal' },
-				{ value: 'in', label: 'In' },
-				{ value: 'nin', label: 'Not In' },
+				{ value: 'eq', label: 'Is' },
+				{ value: 'ne', label: 'Is not' },
+				{ value: 'in', label: 'Any of' },
+				{ value: 'nin', label: 'None of' },
 			];
 		}
 	});
@@ -323,5 +339,17 @@
 
 	const executeCustomQuery = () => {
 		showCustomResult.value = true;
+	};
+
+	const getPlaceholder = () => {
+		const fieldType = getFieldType(customQuery.value.model, customQuery.value.field);
+		if (fieldType === 'Number') return 'Enter a number';
+		if (fieldType === 'Date') return 'Select a date';
+		if (fieldType === 'Boolean') return 'True or False';
+		return 'Enter a value';
+	};
+
+	const removeValue = (index) => {
+		customQuery.value.values.splice(index, 1);
 	};
 </script>

@@ -2,6 +2,7 @@
   <div v-if="currentUser" class="min-h-screen bg-gradient-to-br from-blue-100 to-indigo-200 py-12 px-4 sm:px-6 lg:px-8">
     <div class="max-w-4xl mx-auto bg-white rounded-xl shadow-2xl overflow-hidden">
       <div class="p-8">
+        <!-- Header and Dashboard button (unchanged) -->
         <div class="flex justify-between items-center mb-6">
           <h2 class="text-3xl font-extrabold text-gray-900">{{ profession }} Registration</h2>
           <button
@@ -12,14 +13,30 @@
           </button>
         </div>
         
+        <!-- User info (unchanged) -->
         <div class="mb-6">
           <p class="text-lg text-gray-700">Welcome, <span class="font-semibold">{{ currentUser.firstName }} {{ currentUser.lastName }}</span>!</p>
           <p class="text-sm text-gray-500">Staff ID: {{ currentUser.staff_id }}</p>
           <p class="text-sm text-gray-500">Profession: {{ profession }}</p>
         </div>
 
-        <!-- Healthcare Professional Registration Form -->
-        <div class="mb-8">
+        <!-- New: Instructions Card -->
+        <div class="bg-blue-50 border-l-4 border-blue-500 p-4 mb-6 rounded-md shadow-md">
+          <h3 class="text-lg font-semibold text-blue-700 mb-2">Important Instructions</h3>
+          <p class="text-blue-600 mb-2">
+            For each {{ profession }} registered:
+          </p>
+          <ul class="list-disc list-inside ml-4 mb-2 text-blue-600">
+            <li>The <strong>staff ID</strong> will be their <strong>username</strong> for login.</li>
+            <li>Their <strong>surname</strong> will be set as the <strong>default password</strong>.</li>
+          </ul>
+          <p class="text-blue-600">
+            Please ensure to communicate these details securely to each {{ profession }} and advise them to change their password upon first login.
+          </p>
+        </div>
+
+        <!-- Healthcare Professional Registration Form (with enhancements) -->
+        <div class="mb-8 bg-white shadow-md rounded-lg p-6">
           <h3 class="text-xl font-bold text-gray-900 mb-4">Register New {{ profession }}</h3>
           <form @submit.prevent="registerHealthcareProfessional" class="space-y-4">
             <div class="grid grid-cols-2 gap-4">
@@ -27,14 +44,17 @@
               <input v-model="hcpForm.lastName" type="text" required class="px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500" placeholder="Last Name">
             </div>
             <input v-model="hcpForm.email" type="email" required class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500" placeholder="Email">
+            <p class="text-sm text-gray-600 italic">
+              Note: The staff ID will be generated automatically and used as the username.
+            </p>
             <button type="submit" class="w-full px-4 py-2 bg-indigo-600 text-white rounded-md hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 transition duration-300 ease-in-out transform hover:-translate-y-1 hover:scale-105">
               Register {{ profession }}
             </button>
           </form>
         </div>
 
-        <!-- Registered Healthcare Professionals List -->
-        <div>
+        <!-- Registered Healthcare Professionals List (with enhancements) -->
+        <div class="bg-white shadow-md rounded-lg p-6">
           <h3 class="text-xl font-bold text-gray-900 mb-4">Registered {{ profession }}s</h3>
           <div v-if="registeredHCPs.length > 0" class="overflow-x-auto">
             <table class="min-w-full divide-y divide-gray-200">
@@ -52,7 +72,7 @@
                   <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{{ hcp.staff_id }}</td>
                   <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{{ hcp.email }}</td>
                   <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                    <button @click="openRemoveModal(hcp)" class="text-red-600 hover:text-red-900 focus:outline-none">
+                    <button @click="openRemoveModal(hcp)" class="px-3 py-1 bg-red-500 text-white rounded hover:bg-red-600 transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-offset-2">
                       Remove
                     </button>
                   </td>
@@ -69,17 +89,18 @@
   <div v-else class="min-h-screen flex items-center justify-center bg-gray-100">
     <p class="text-xl text-gray-600">Loading...</p>
   </div>
-  <!-- Add this modal at the end of the template -->
+  
+  <!-- Remove Modal (with enhancements) -->
   <teleport to="body">
-    <div v-if="showRemoveModal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center">
-      <div class="bg-white p-4 rounded-lg max-w-md w-full">
-        <h2 class="text-xl font-bold mb-4">Confirm Healthcare Professional Removal</h2>
+    <div v-if="showRemoveModal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+      <div class="bg-white p-6 rounded-lg max-w-md w-full">
+        <h2 class="text-xl font-bold mb-4 text-indigo-700">Confirm {{ profession }} Removal</h2>
         <p class="mb-4">Are you sure you want to remove {{ hcpToRemove?.name }}?</p>
-        <p class="mb-4">To confirm, please type the staff ID: <strong>{{ hcpToRemove?.staff_id }}</strong></p>
-        <input v-model="confirmationInput" class="w-full p-2 border rounded mb-4" placeholder="Type staff ID here" />
+        <p class="mb-4">To confirm, please type the staff ID: <strong class="text-indigo-600">{{ hcpToRemove?.staff_id }}</strong></p>
+        <input v-model="confirmationInput" class="w-full p-2 border rounded mb-4 focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500" placeholder="Type staff ID here" />
         <div class="flex justify-end">
-          <button @click="closeRemoveModal" class="px-4 py-2 bg-gray-300 rounded mr-2">Cancel</button>
-          <button @click="removeHealthcareProfessional" :disabled="confirmationInput !== hcpToRemove?.staff_id" class="px-4 py-2 bg-red-500 text-white rounded disabled:opacity-50">Remove</button>
+          <button @click="closeRemoveModal" class="px-4 py-2 bg-gray-300 rounded mr-2 hover:bg-gray-400 transition-colors duration-200">Cancel</button>
+          <button @click="removeHealthcareProfessional" :disabled="confirmationInput !== hcpToRemove?.staff_id" class="px-4 py-2 bg-red-500 text-white rounded disabled:opacity-50 hover:bg-red-600 transition-colors duration-200">Remove</button>
         </div>
       </div>
     </div>
