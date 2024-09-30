@@ -217,7 +217,9 @@
     "Fashion Designer",
     "Telemarketer",
     "Receptionist",
-    "Social Worker"
+    "Social Worker",
+    "None",
+    "Student"
   ],
   "marital_statuses": ["Single", "Married", "Divorced", "Widowed"],
   "addresses": [

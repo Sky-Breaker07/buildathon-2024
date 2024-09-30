@@ -1,6 +1,11 @@
 <!-- src/views/PatientStatistics.vue -->
 <template>
 	<div class="container mx-auto px-4 py-8 font-poppins">
+		<!-- Add BackButton component here -->
+		<div class="mb-6">
+			<BackButton />
+		</div>
+
 		<h1 class="text-4xl font-bold mb-8 text-center text-indigo-800">
 			Patient Insights Dashboard
 		</h1>
@@ -26,9 +31,9 @@
 			/>
 
 			<DynamicStatistics
-				title="Patients Aged 40+"
+				title="Age Distribution"
 				statType="getPatientsByBiodata"
-				:params="{ field: 'age', operator: 'gte', value: 40 }"
+				:params="ageParams"
 				chartType="pie"
 				icon="ri-user-star-line"
 			/>
@@ -46,13 +51,9 @@
 			/>
 
 			<DynamicStatistics
-				title="Employed Patients"
+				title="Employment Status"
 				statType="getPatientsByBiodata"
-				:params="{
-					field: 'occupation',
-					operator: 'ne',
-					value: 'Student',
-				}"
+				:params="employmentParams"
 				chartType="pie"
 				icon="ri-briefcase-line"
 			/>
@@ -174,6 +175,8 @@
 	import { ref, computed, onMounted } from 'vue';
 	import DynamicStatistics from '../components/DynamicStatistics.vue';
 	import PatientStats from '../utils/patientStats';
+	// Import BackButton component
+	import BackButton from '../components/BackButton.vue';
 
 	const queryableFields = ref({});
 	const customQuery = ref({
@@ -223,6 +226,26 @@
 			];
 		}
 	});
+
+	const ageCategories = [
+		{ label: '0-12 (Children)', min: 0, max: 12 },
+		{ label: '13-19 (Teenagers)', min: 13, max: 19 },
+		{ label: '20-39 (Young Adults)', min: 20, max: 39 },
+		{ label: '40-64 (Adults)', min: 40, max: 64 },
+		{ label: '65+ (Elderly)', min: 65, max: Infinity },
+	];
+
+	const ageParams = computed(() => ({
+		field: 'age',
+		operator: 'custom',
+		value: ageCategories,
+	}));
+
+	const employmentParams = computed(() => ({
+		field: 'occupation',
+		operator: 'custom',
+		value: ['Employed', 'Unemployed'],
+	}));
 
 	onMounted(async () => {
 		try {

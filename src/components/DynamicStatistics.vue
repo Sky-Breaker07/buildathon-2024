@@ -139,8 +139,21 @@
 
 		if (['pie', 'doughnut'].includes(props.chartType)) {
 			if (Array.isArray(result.value)) {
+				let labels, data;
+				if (props.params.operator === 'custom') {
+					if (props.params.field === 'age') {
+						labels = props.params.value.map(category => category.label);
+						data = result.value;
+					} else if (props.params.field === 'occupation') {
+						labels = ['Employed', 'Unemployed'];
+						data = result.value;
+					}
+				} else {
+					labels = props.params.value;
+					data = result.value;
+				}
 				return {
-					labels: props.params.value,
+					labels: labels,
 					datasets: [
 						{
 							backgroundColor: [
@@ -148,8 +161,14 @@
 								'#10B981',
 								'#F59E0B',
 								'#EF4444',
+								'#6366F1',
+								'#8B5CF6',
+								'#EC4899',
+								'#14B8A6',
+								'#F97316',
+								'#06B6D4'
 							],
-							data: result.value,
+							data: data,
 						},
 					],
 				};
@@ -213,7 +232,32 @@
 			loading.value = true;
 			error.value = null;
 			totalPatients.value = await PatientStats.getTotalPatients();
-			if (typeof PatientStats[props.statType] === 'function') {
+			
+			if (props.params.operator === 'custom') {
+				if (props.params.field === 'age') {
+					result.value = await Promise.all(
+						props.params.value.map(async (category) => {
+							const minCount = await PatientStats.getPatientsByBiodata(
+								'age',
+								'gte',
+								category.min
+							);
+							const maxCount = category.max < Infinity 
+								? await PatientStats.getPatientsByBiodata('age', 'gte', category.max + 1)
+								: 0;
+							return minCount - maxCount;
+						})
+					);
+				} else if (props.params.field === 'occupation') {
+					const employed = await PatientStats.getPatientsByBiodata(
+						'occupation',
+						'nin',
+						['Student', 'None', '']
+					);
+					const unemployed = totalPatients.value - employed;
+					result.value = [employed, unemployed];
+				}
+			} else if (typeof PatientStats[props.statType] === 'function') {
 				const { field, operator, value } = props.params;
 				if (Array.isArray(value)) {
 					result.value = await Promise.all(
