@@ -112,7 +112,10 @@
 							}"
 							class="bg-clrBlue text-clrWhite transition duration-500 ease-in-out hover:bg-indigo-700 px-4 py-2 rounded-md"
 						>
-							<v-icon name="ri-file-text-line" class="mr-2" />
+							<v-icon
+								name="ri-file-text-line"
+								class="mr-2"
+							/>
 							Access File
 						</router-link>
 					</td>
@@ -121,7 +124,7 @@
 		</table>
 		<p
 			v-else
-			class="text-center mt-4"
+			class="text-center mt-4 font-poppins"
 		>
 			No patients found.
 		</p>
@@ -129,20 +132,22 @@
 		<!-- Pagination -->
 		<div
 			v-if="displayedPatients.length > 0"
-			class="mt-4 flex justify-between items-center"
+			class="mt-8 flex justify-between items-center"
 		>
 			<button
 				@click="changePage(-1)"
 				:disabled="currentPage === 1"
-				class="px-4 py-2 bg-blue-500 text-white rounded-md disabled:opacity-50"
+				class="px-4 py-2 bg-blue-500 text-white rounded-md font-poppins disabled:opacity-50"
 			>
 				Previous
 			</button>
-			<span>Page {{ currentPage }} of {{ totalPages }}</span>
+			<span class="font-poppins"
+				>Page {{ currentPage }} of {{ totalPages }}</span
+			>
 			<button
 				@click="changePage(1)"
 				:disabled="currentPage === totalPages"
-				class="px-4 py-2 bg-blue-500 text-white rounded-md disabled:opacity-50"
+				class="px-4 py-2 bg-blue-500 text-white rounded-md font-poppins disabled:opacity-50"
 			>
 				Next
 			</button>

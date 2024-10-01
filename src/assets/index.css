@@ -4,8 +4,36 @@
 @tailwind components;
 @tailwind utilities;
 
+@layer utilities {
+	.no-spinners {
+		-moz-appearance: textfield;
+	}
+
+	.no-spinners::-webkit-outer-spin-button,
+	.no-spinners::-webkit-inner-spin-button {
+		-webkit-appearance: none;
+		margin: 0;
+	}
+}
+
 html {
 	font-size: 16px;
 	scroll-behavior: smooth;
 	scroll-padding-top: 5rem;
+}
+
+input,
+select,
+textarea {
+	outline: none;
+}
+
+[type='number'] {
+	-moz-appearance: textfield;
+}
+
+[type='number']::-webkit-outer-spin-button,
+[type='number']::-webkit-inner-spin-button {
+	-webkit-appearance: none;
+	margin: 0;
 }

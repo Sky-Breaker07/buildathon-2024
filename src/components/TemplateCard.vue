@@ -47,6 +47,7 @@
 		flex-direction: column;
 		align-items: center;
 		text-align: center;
+		cursor: pointer;
 		transition: all 0.3s ease;
 	}
 
@@ -61,10 +62,10 @@
 	}
 
 	.template-card__title {
-		font-size: 1.5rem;
+		font-size: 1.3rem;
 		font-weight: 600;
 		color: #2c3e50;
-		margin-bottom: 0.5rem;
+		margin-bottom: 0.75rem;
 	}
 
 	.template-card__description {

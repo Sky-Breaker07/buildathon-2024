@@ -65,7 +65,10 @@
 									:to="`/dashboard/assigned/${patient.hospital_record.hospital_id}`"
 									class="bg-clrBlue text-clrWhite transition duration-500 ease-in-out hover:bg-indigo-700 px-4 py-2 rounded-md"
 								>
-									<v-icon name="ri-file-text-line" class="mr-2" />
+									<v-icon
+										name="ri-file-text-line"
+										class="mr-2"
+									/>
 									Access File
 								</router-link>
 							</td>
@@ -77,7 +80,7 @@
 			<!-- No results message -->
 			<div
 				v-else-if="patientStore.assignedPatients.length > 0"
-				class="text-center mt-8 text-indigo-800 font-medium"
+				class="text-center mt-8 text-indigo-800 font-medium font-poppins"
 			>
 				No patients found matching your search criteria.
 			</div>
@@ -85,7 +88,7 @@
 			<!-- No assigned patients message -->
 			<div
 				v-else
-				class="text-center mt-8 text-indigo-800 font-medium"
+				class="text-center mt-8 text-indigo-800 font-medium font-poppins"
 			>
 				You currently have no assigned patients.
 			</div>

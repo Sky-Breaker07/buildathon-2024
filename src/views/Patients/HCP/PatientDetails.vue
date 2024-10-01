@@ -1,7 +1,7 @@
 <template>
 	<div class="font-poppins p-8 max-w-6xl mx-auto min-h-screen">
-		<BackButton class="pt-2 pb-4" />
-		<h1 class="text-4xl font-bold mb-6 text-center text-indigo-800">
+		<BackButton class="py-4" />
+		<h1 class="text-4xl font-bold mb-6 text-center text-clrBlue">
 			Patient Profile
 		</h1>
 		<div
@@ -21,7 +21,7 @@
 		>
 			<!-- Biodata Section -->
 			<section
-				class="bg-white shadow-lg rounded-lg p-6 transform hover:scale-105 transition-transform duration-300"
+				class="bg-white shadow-lg rounded-lg p-6 transform hover:bg-clrWhite transition-bg duration-300"
 			>
 				<div class="flex justify-between items-center mb-4">
 					<h2 class="text-3xl font-semibold text-indigo-800">

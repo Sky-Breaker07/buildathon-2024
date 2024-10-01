@@ -1,8 +1,8 @@
 <template>
 	<div class="all-templates">
 		<BackButton class="pt-4 pb-2" />
-		<h1 class="title">Template Management</h1>
-		<div class="template-grid">
+		<h1 class="title font-poppins text-clrBlue">Template Management</h1>
+		<div class="template-grid font-poppins">
 			<template-card
 				v-for="template in templates"
 				:key="template.name"
@@ -66,7 +66,6 @@
 	.title {
 		font-size: 2.5rem;
 		font-weight: 700;
-		color: #2c3e50;
 		margin-bottom: 2rem;
 		text-align: center;
 	}

@@ -1,15 +1,13 @@
 <template>
-	<div class="p-8 max-w-6xl mx-auto min-h-screen">
+	<div class="p-8 max-w-6xl mx-auto min-h-screen font-poppins">
 		<BackButton class="pt-4 pb-2" />
-		<h1 class="text-4xl font-bold mb-6 text-center text-indigo-800">
-			Vital Signs
-		</h1>
+		<h1 class="text-4xl font-bold text-center text-clrBlue">Vital Signs</h1>
 		<div
 			v-if="patient"
 			class="space-y-8"
 		>
 			<!-- Patient Info -->
-			<section class="bg-white shadow-lg rounded-lg p-6">
+			<section class="bg-white border-b-2 rounded-lg p-6">
 				<h2 class="text-2xl font-semibold mb-4 text-indigo-700">
 					Patient Information
 				</h2>
@@ -34,7 +32,7 @@
 			</section>
 
 			<!-- Create New Vital Signs -->
-			<section class="bg-white shadow-lg rounded-lg p-6">
+			<section class="bg-white border-b-2 rounded-lg p-6">
 				<h2 class="text-2xl font-semibold mb-4 text-indigo-700">
 					Record New Vital Signs
 				</h2>
@@ -162,7 +160,7 @@
 			</section>
 
 			<!-- Previous Vital Signs -->
-			<section class="bg-white shadow-lg rounded-lg p-6">
+			<section class="bg-white shadow-md rounded-lg p-6">
 				<h2 class="text-2xl font-semibold mb-4 text-indigo-700">
 					Previous Vital Signs
 				</h2>

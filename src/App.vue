@@ -9,10 +9,9 @@
 	import { computed, onMounted } from 'vue';
 	import { useRoute } from 'vue-router';
 	import { warmUp } from './utils/misc';
-	import OrganizationHeader from './components/OrganizationHeader.vue'
+	import OrganizationHeader from './components/OrganizationHeader.vue';
 	const route = useRoute();
-	
-	
+
 	onMounted(async () => {
 		const warmingUp = await warmUp();
 
@@ -20,12 +19,10 @@
 			console.log(warmingUp.message);
 		}
 	});
-	
+
 	const layout = computed(() => {
 		return route.meta.layout || 'div';
 	});
 </script>
-
-
 
 <style scoped></style>

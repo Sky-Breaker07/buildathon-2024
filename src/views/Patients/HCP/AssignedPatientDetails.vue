@@ -1,7 +1,7 @@
 <template>
 	<div class="p-8 max-w-6xl mx-auto min-h-screen font-poppins">
 		<BackButton class="pt-2 pb-4" />
-		<h1 class="text-4xl font-bold mb-6 text-center text-indigo-800">
+		<h1 class="text-4xl font-bold mb-6 text-center text-clrBlue">
 			Patient Profile
 		</h1>
 		<div
@@ -21,7 +21,7 @@
 		>
 			<!-- Biodata Section -->
 			<section
-				class="bg-white shadow-lg rounded-lg p-6 transform hover:scale-105 transition-transform duration-300"
+				class="bg-white shadow-md rounded-lg p-6 transform hover:scale-105 transition-transform duration-300"
 			>
 				<h2 class="text-3xl font-semibold mb-4 text-indigo-800">
 					Biodata
@@ -54,7 +54,7 @@
 
 			<!-- Hospital Record Section -->
 			<section
-				class="bg-white shadow-lg rounded-lg p-6 transform hover:scale-105 transition-transform duration-300"
+				class="bg-white shadow-lg rounded-mb p-6 transform hover:scale-105 transition-transform duration-300"
 			>
 				<h2 class="text-3xl font-semibold mb-4 text-indigo-800">
 					Hospital Record
@@ -143,7 +143,7 @@
 					]"
 					:key="section"
 					:to="`/dashboard/assigned/${patient.hospital_record.hospital_id}/${section}`"
-					class="bg-white shadow-lg rounded-lg p-6 transform hover:scale-105 transition-transform duration-300 cursor-pointer"
+					class="bg-white shadow-md rounded-lg p-6 transform hover:scale-105 transition-transform duration-300 cursor-pointer"
 				>
 					<h2
 						class="text-3xl font-semibold mb-4 text-indigo-800 capitalize"
@@ -156,7 +156,7 @@
 
 			<!-- Transfer Patient Section -->
 			<section
-				class="bg-white shadow-lg rounded-lg p-6 transform hover:scale-105 transition-transform duration-300"
+				class="bg-white shadow-md rounded-lg p-6 transform hover:scale-105 transition-transform duration-300"
 			>
 				<h2 class="text-3xl font-semibold mb-4 text-indigo-800">
 					Refer Patient
@@ -217,7 +217,7 @@
 		</div>
 		<div
 			v-else
-			class="text-center text-red-500 text-xl"
+			class="text-center text-red-500 text-xl font-poppins"
 		>
 			Failed to load patient details. Please try again.
 		</div>
