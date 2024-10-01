@@ -58,11 +58,11 @@
 						:key="patient.hospital_id"
 						class="hover:bg-gray-50"
 					>
-						<td class="py-4 px-2 border-b">{{ patient.name }}</td>
-						<td class="py-4 px-2 border-b">
+						<td class="p-2 border-b">{{ patient.name }}</td>
+						<td class="p-2 border-b">
 							{{ patient.hospital_id }}
 						</td>
-						<td class="py-4 px-2 border-b space-x-2">
+						<td class="p-2 border-b space-x-2">
 							<router-link
 								:to="`/dashboard/assigned/${patient.hospital_id}`"
 								class="bg-clrBlue text-clrWhite transition duration-500 ease-in-out hover:bg-indigo-700 px-4 py-2 rounded-md inline-flex items-center"
@@ -133,13 +133,13 @@
 							:key="patient.hospital_id"
 							class="hover:bg-gray-50"
 						>
-							<td class="py-4 px-2 border-b">
+							<td class="p-2 border-b">
 								{{ patient.name }}
 							</td>
-							<td class="py-4 px-2 border-b">
+							<td class="p-2 border-b">
 								{{ patient.hospital_id }}
 							</td>
-							<td class="py-4 px-2 border-b space-x-2">
+							<td class="p-2 border-b space-x-2">
 								<router-link
 									:to="`/dashboard/patient/${patient.hospital_id}`"
 									class="bg-clrBlue text-clrWhite transition duration-500 ease-in-out hover:bg-indigo-700 px-4 py-2 rounded-md inline-flex items-center"
