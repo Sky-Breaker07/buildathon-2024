@@ -161,15 +161,19 @@
           class="bg-white shadow-lg rounded-lg overflow-hidden"
         >
           <div
-            class="px-6 py-4 bg-gradient-to-r from-indigo-500 to-purple-600 text-white"
+            class="px-6 py-4 bg-gradient-to-r from-indigo-500 to-purple-600 text-white flex justify-between items-center"
           >
             <h2 class="text-2xl font-bold flex items-center">
               <v-icon name="ri-edit-line" class="mr-2" />
               {{ selectedTemplate.name }}
             </h2>
-            <p class="mt-2 text-indigo-100">
-              {{ selectedTemplate.description }}
-            </p>
+            <button
+              @click="resetTemplateSelection"
+              class="text-white hover:text-indigo-200 transition duration-300 ease-in-out"
+            >
+              <v-icon name="ri-arrow-left-line" class="mr-1" />
+              Back to Templates
+            </button>
           </div>
           <div class="p-6">
             <form @submit.prevent="submitEvaluation" class="space-y-8">
@@ -194,7 +198,50 @@
                     <span v-if="field.required" class="text-red-500">*</span>
                   </label>
 
+                  <template v-if="field.isImage">
+                    <div class="flex items-center space-x-4">
+                      <input
+                        type="file"
+                        :id="`${sectionName}_${fieldKey}`"
+                        @change="
+                          handleImageUpload($event, sectionName, fieldKey)
+                        "
+                        accept=".jpg,.jpeg,.png,.gif,.webp"
+                        class="hidden"
+                      />
+                      <label
+                        :for="`${sectionName}_${fieldKey}`"
+                        class="px-4 py-2 bg-blue-500 text-white rounded cursor-pointer hover:bg-blue-600 transition duration-300"
+                      >
+                        Select Image
+                      </label>
+                      <span
+                        v-if="evaluationData[sectionName][fieldKey]"
+                        class="text-sm text-gray-600"
+                      >
+                        Image selected
+                      </span>
+                      <button
+                        v-if="evaluationData[sectionName][fieldKey]"
+                        @click.prevent="deleteImage(sectionName, fieldKey)"
+                        class="text-red-500 hover:text-red-700"
+                      >
+                        Delete
+                      </button>
+                    </div>
+                    <div
+                      v-if="evaluationData[sectionName][fieldKey]"
+                      class="mt-2"
+                    >
+                      <img
+                        :src="evaluationData[sectionName][fieldKey]"
+                        alt="Uploaded image"
+                        class="max-w-full h-auto rounded-lg shadow-md"
+                      />
+                    </div>
+                  </template>
                   <component
+                    v-else
                     :is="getFieldComponent(field.type)"
                     :id="`${sectionName}_${fieldKey}`"
                     :value="evaluationData[sectionName][fieldKey]"
@@ -268,55 +315,79 @@
             No past evaluations found for this patient.
           </p>
         </div>
-        <div
-          v-else
-          v-for="(evaluations, profession) in groupedEvaluations"
-          :key="profession"
-          class="bg-white shadow-lg rounded-lg overflow-hidden"
-        >
-          <div class="px-6 py-4 bg-gradient-to-r from-purple-500 to-pink-600">
-            <h2 class="text-2xl font-bold text-white">
-              {{ profession }} Evaluations
-            </h2>
-          </div>
-          <div class="p-6">
+        <div v-else>
+          <div
+            v-for="(evaluations, profession) in groupedEvaluations"
+            :key="profession"
+            class="bg-white shadow-lg rounded-lg overflow-hidden mb-4"
+          >
             <div
-              v-for="(evaluation, index) in evaluations"
-              :key="index"
-              class="mb-6 last:mb-0"
+              @click="toggleAccordion(profession)"
+              class="px-6 py-4 bg-gradient-to-r from-purple-500 to-pink-600 cursor-pointer flex justify-between items-center"
             >
-              <div class="flex justify-between items-center mb-2">
-                <h3 class="text-lg font-semibold text-gray-900">
-                  {{ evaluation.template.name }}
-                </h3>
-                <p class="text-sm text-gray-500">
-                  {{ new Date(evaluation.createdAt).toLocaleString() }}
-                </p>
-              </div>
-              <div class="bg-gray-50 rounded-lg p-4">
-                <div
-                  v-for="(
-                    sectionData, sectionName
-                  ) in evaluation.evaluation_data"
-                  :key="sectionName"
-                  class="mb-4"
-                >
-                  <h4 class="text-md font-medium text-gray-700 mb-2">
-                    {{ sectionName }}
-                  </h4>
+              <h2 class="text-2xl font-bold text-white">
+                {{ profession }} Evaluations
+              </h2>
+              <v-icon
+                :name="expandedProfessions[profession] ? 'ri-arrow-up-s-line' : 'ri-arrow-down-s-line'"
+                class="text-white text-2xl transition-transform duration-300"
+                :class="{ 'transform rotate-180': expandedProfessions[profession] }"
+              />
+            </div>
+            <transition
+              name="accordion"
+              @enter="startTransition"
+              @after-enter="endTransition"
+              @before-leave="startTransition"
+              @after-leave="endTransition"
+            >
+              <div v-show="expandedProfessions[profession]" class="overflow-hidden">
+                <div class="p-6">
                   <div
-                    v-for="(value, key) in sectionData"
-                    :key="key"
-                    class="ml-4 mb-2"
+                    v-for="(evaluation, index) in evaluations"
+                    :key="index"
+                    class="mb-6 last:mb-0 bg-white shadow-lg rounded-lg overflow-hidden"
                   >
-                    <p class="text-sm font-medium text-gray-600">{{ key }}:</p>
-                    <p class="text-sm text-gray-900">
-                      {{ value }}
-                    </p>
+                    <div class="px-6 py-4 bg-gradient-to-r from-purple-500 to-pink-600 text-white">
+                      <h3 class="text-xl font-semibold">
+                        {{ evaluation.template?.name || 'Unnamed Evaluation' }}
+                      </h3>
+                      <p class="text-sm text-indigo-100">
+                        {{ new Date(evaluation.createdAt).toLocaleString() }}
+                      </p>
+                    </div>
+                    <div class="p-6">
+                      <div
+                        v-for="(sectionData, sectionName) in evaluation.evaluation_data"
+                        :key="sectionName"
+                        class="mb-6 last:mb-0"
+                      >
+                        <h4 class="text-lg font-medium text-gray-800 mb-3 border-b border-gray-200 pb-2">{{ sectionName }}</h4>
+                        <div
+                          v-for="(value, key) in sectionData"
+                          :key="key"
+                          class="mb-4 last:mb-0"
+                        >
+                          <p class="text-sm font-medium text-gray-600 mb-1">{{ key }}:</p>
+                          <div v-if="isImageUrl(value)" class="mt-2">
+                            <img 
+                              :src="value" 
+                              :alt="key"
+                              class="max-w-full h-auto rounded-lg shadow-md cursor-pointer hover:opacity-90 transition duration-300 ease-in-out"
+                              @click="openFullScreenImage(value)"
+                            />
+                          </div>
+                          <p v-else-if="typeof value === 'boolean'" class="text-base text-gray-900 font-semibold">
+                            {{ value ? 'True' : 'False' }}
+                          </p>
+                          <p v-else class="text-base text-gray-900">{{ value }}</p>
+                        </div>
+                      </div>
+                    </div>
                   </div>
                 </div>
               </div>
-            </div>
+            </transition>
           </div>
         </div>
       </div>
@@ -333,100 +404,39 @@
       </div>
     </div>
     <LoadingModal ref="loadingModal" />
+
+    <!-- Full-screen image modal -->
+    <div
+      v-if="fullScreenImage"
+      class="fixed inset-0 bg-black bg-opacity-75 flex items-center justify-center z-50"
+    >
+      <div class="relative w-full h-full">
+        <img
+          :src="fullScreenImage"
+          alt="Full-screen image"
+          class="max-w-full max-h-full m-auto object-contain"
+        />
+        <button
+          @click="closeFullScreenImage"
+          class="absolute top-4 right-4 text-white text-2xl hover:text-gray-300"
+        >
+          &times;
+        </button>
+      </div>
+    </div>
   </div>
 </template>
-
-<style scoped>
-@import url("https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap");
-
-.bg-gradient-to-r {
-  background-size: 200% 200%;
-  animation: gradient 15s ease infinite;
-}
-
-@keyframes gradient {
-  0% {
-    background-position: 0% 50%;
-  }
-  50% {
-    background-position: 100% 50%;
-  }
-  100% {
-    background-position: 0% 50%;
-  }
-}
-
-/* Apply Poppins font to all text */
-* {
-  font-family: "Poppins", sans-serif;
-}
-
-/* Custom styles for form elements */
-input[type="text"],
-input[type="number"],
-input[type="date"],
-textarea,
-select {
-  transition: all 0.3s ease;
-}
-
-input[type="text"]:focus,
-input[type="number"]:focus,
-input[type="date"]:focus,
-textarea:focus,
-select:focus {
-  transform: translateY(-2px);
-  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1),
-    0 2px 4px -1px rgba(0, 0, 0, 0.06);
-}
-
-/* Custom checkbox styles */
-input[type="checkbox"] {
-  position: relative;
-  cursor: pointer;
-}
-
-input[type="checkbox"]:before {
-  content: "";
-  display: block;
-  position: absolute;
-  width: 20px;
-  height: 20px;
-  top: -2px;
-  left: -2px;
-  border: 2px solid #d1d5db;
-  border-radius: 4px;
-  background-color: white;
-}
-
-input[type="checkbox"]:checked:before {
-  background-color: #4f46e5;
-  border-color: #4f46e5;
-}
-
-input[type="checkbox"]:checked:after {
-  content: "";
-  display: block;
-  position: absolute;
-  width: 5px;
-  height: 10px;
-  border: solid white;
-  border-width: 0 2px 2px 0;
-  transform: rotate(45deg);
-  top: 2px;
-  left: 7px;
-}
-</style>
 
 <script setup>
 import { ref, onMounted, computed } from "vue";
 import { useRouter, useRoute } from "vue-router";
 import { useToast } from "vue-toastification";
 import { useStaffStore } from "@/stores/staff-management";
-import { getEvaluationTemplatesByProfession } from "@/utils/evaluationTemplate";
+import { getTemplatesByProfession } from "@/utils/template";
 import { createEvaluation, getPatient } from "@/utils/patientManagement";
 import LoadingModal from "@/components/LoadingModal.vue";
 import BackButton from "@/components/BackButton.vue";
+import { useFirebase } from "@/utils/useFirebase";
 
 const router = useRouter();
 const route = useRoute();
@@ -440,11 +450,33 @@ const evaluationData = ref({});
 const patientData = ref(null);
 const activeTab = ref("new");
 
+const fullScreenImage = ref(null);
+
 const currentUser = computed(() => staffStore.currentUser);
 
+const { uploadImage, deleteImage: deleteFirebaseImage } = useFirebase();
+
+const expandedProfessions = ref({});
+
+const toggleAccordion = (profession) => {
+  expandedProfessions.value[profession] = !expandedProfessions.value[profession];
+};
+
+const startTransition = (el) => {
+  el.style.height = 'auto';
+  const height = el.offsetHeight;
+  el.style.height = '0px';
+  el.offsetHeight; // force reflow
+  el.style.height = height + 'px';
+};
+
+const endTransition = (el) => {
+  el.style.height = '';
+};
+
 const updateEvaluationData = (sectionName, fieldKey, value) => {
-  if (selectedTemplate.value.fields[sectionName][fieldKey].type === 'Boolean') {
-    evaluationData.value[sectionName][fieldKey] = value === 'true';
+  if (selectedTemplate.value.fields[sectionName][fieldKey].type === "Boolean") {
+    evaluationData.value[sectionName][fieldKey] = value === "true";
   } else {
     evaluationData.value[sectionName][fieldKey] = value;
   }
@@ -493,7 +525,8 @@ const fetchCurrentUser = async () => {
 const fetchEvaluationTemplates = async () => {
   try {
     loadingModal.value.show();
-    const response = await getEvaluationTemplatesByProfession(
+    const response = await getTemplatesByProfession(
+      'evaluation',
       currentUser.value.profession
     );
     evaluationTemplates.value = response.data.evaluationTemplates;
@@ -581,6 +614,57 @@ const resetForm = () => {
   }
 };
 
+const handleImageUpload = async (event, sectionName, fieldKey) => {
+  const file = event.target.files[0];
+  if (!file) return;
+
+  if (file.size > 5 * 1024 * 1024) {
+    toast.error("File size exceeds 5MB limit");
+    return;
+  }
+
+  const allowedTypes = ["image/jpeg", "image/png", "image/gif", "image/webp"];
+  if (!allowedTypes.includes(file.type)) {
+    toast.error(
+      "Invalid file type. Please upload a JPG, JPEG, PNG, GIF, or WEBP file."
+    );
+    return;
+  }
+
+  loadingModal.value.show();
+  try {
+    const downloadURL = await uploadImage(file, "Evaluations");
+    if (downloadURL) {
+      updateEvaluationData(sectionName, fieldKey, downloadURL);
+      console.log("Image uploaded successfully:", downloadURL);
+    } else {
+      throw new Error("Failed to get download URL");
+    }
+  } catch (error) {
+    console.error("Error uploading image:", error);
+    toast.error("Failed to upload image. Please try again.");
+  } finally {
+    loadingModal.value.hide();
+  }
+};
+
+const deleteImage = async (sectionName, fieldKey) => {
+  const imageUrl = evaluationData.value[sectionName][fieldKey];
+  if (!imageUrl) return;
+
+  loadingModal.value.show();
+  try {
+    await deleteFirebaseImage(imageUrl);
+    updateEvaluationData(sectionName, fieldKey, "");
+    toast.success("Image deleted successfully");
+  } catch (error) {
+    console.error("Error deleting image:", error);
+    toast.error("Failed to delete image. Please try again.");
+  } finally {
+    loadingModal.value.hide();
+  }
+};
+
 const submitEvaluation = async () => {
   try {
     loadingModal.value.show();
@@ -589,18 +673,18 @@ const submitEvaluation = async () => {
       throw new Error("Missing template or patient data");
     }
 
-    // Transform the evaluationData to use labels instead of field keys
     const transformedEvaluationData = Object.entries(
       evaluationData.value
     ).reduce((acc, [sectionName, sectionData]) => {
       acc[sectionName] = Object.entries(sectionData).reduce(
         (sectionAcc, [fieldKey, value]) => {
           const field = selectedTemplate.value.fields[sectionName][fieldKey];
-          if (field && field.label) {
-            sectionAcc[field.label] = value;
+          if (field) {
+            const key = field.label || fieldKey; // Use label if available, otherwise use fieldKey
+            sectionAcc[key] = field.isImage ? value : value;
           } else {
             console.warn(
-              `Missing label for field ${fieldKey} in section ${sectionName}`
+              `Missing field definition for ${fieldKey} in section ${sectionName}`
             );
           }
           return sectionAcc;
@@ -610,7 +694,7 @@ const submitEvaluation = async () => {
       return acc;
     }, {});
 
-    console.log("Transformed Evaluation Data:", transformedEvaluationData); // For debugging
+    console.log("Transformed Evaluation Data:", transformedEvaluationData);
 
     const response = await createEvaluation(
       selectedTemplate.value._id,
@@ -621,8 +705,8 @@ const submitEvaluation = async () => {
     if (response.data && response.data.status === "Success") {
       toast.success("Evaluation submitted successfully!");
       resetForm();
-      await fetchPatientData(); // Refresh patient data to include the new evaluation
-      activeTab.value = "past"; // Switch to past evaluations tab
+      await fetchPatientData();
+      activeTab.value = "past";
     } else {
       throw new Error("Unexpected response from server");
     }
@@ -665,4 +749,136 @@ const getFieldAttributes = (type) => {
       return { type: "text" };
   }
 };
+
+const isImageUrl = (value) => {
+  return (
+    typeof value === "string" &&
+    value.match(/^https?:\/\/.*\.(jpeg|jpg|gif|png|webp)(\?.*)?$/i)
+  );
+};
+
+const openFullScreenImage = (imageUrl) => {
+  fullScreenImage.value = imageUrl;
+};
+
+const closeFullScreenImage = () => {
+  fullScreenImage.value = null;
+};
+
+const resetTemplateSelection = () => {
+  selectedTemplate.value = null;
+  evaluationData.value = {};
+};
 </script>
+
+<style scoped>
+@import url("https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap");
+
+.bg-gradient-to-r {
+  background-size: 200% 200%;
+  animation: gradient 15s ease infinite;
+}
+
+@keyframes gradient {
+  0% {
+    background-position: 0% 50%;
+  }
+  50% {
+    background-position: 100% 50%;
+  }
+  100% {
+    background-position: 0% 50%;
+  }
+}
+
+/* Apply Poppins font to all text */
+* {
+  font-family: "Poppins", sans-serif;
+}
+
+/* Custom styles for form elements */
+input[type="text"],
+input[type="number"],
+input[type="date"],
+textarea,
+select {
+  transition: all 0.3s ease;
+}
+
+input[type="text"]:focus,
+input[type="number"]:focus,
+input[type="date"]:focus,
+textarea:focus,
+select:focus {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1),
+    0 2px 4px -1px rgba(0, 0, 0, 0.06);
+}
+
+/* Custom checkbox styles */
+input[type="checkbox"] {
+  position: relative;
+  cursor: pointer;
+}
+
+input[type="checkbox"]:before {
+  content: "";
+  display: block;
+  position: absolute;
+  width: 20px;
+  height: 20px;
+  top: -2px;
+  left: -2px;
+  border: 2px solid #d1d5db;
+  border-radius: 4px;
+  background-color: white;
+}
+
+input[type="checkbox"]:checked:before {
+  background-color: #4f46e5;
+  border-color: #4f46e5;
+}
+
+input[type="checkbox"]:checked:after {
+  content: "";
+  display: block;
+  position: absolute;
+  width: 5px;
+  height: 10px;
+  border: solid white;
+  border-width: 0 2px 2px 0;
+  transform: rotate(45deg);
+  top: 2px;
+  left: 7px;
+}
+
+.fixed {
+  position: fixed;
+}
+
+.inset-0 {
+  top: 0;
+  right: 0;
+  bottom: 0;
+  left: 0;
+}
+
+.z-50 {
+  z-index: 50;
+}
+
+.object-contain {
+  object-fit: contain;
+}
+
+.accordion-enter-active,
+.accordion-leave-active {
+  transition: height 0.3s ease-out;
+  overflow: hidden;
+}
+
+.accordion-enter-from,
+.accordion-leave-to {
+  height: 0;
+}
+</style>

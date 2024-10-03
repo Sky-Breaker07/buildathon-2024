@@ -40,9 +40,22 @@ import {
   RiFacebookFill,
   RiTwitterFill,
   RiLinkedinFill,
+  RiImageLine,
+  RiQuestionLine,
+  RiToggleLine,
+  RiArrowLeftLine,
+  RiSettingsLine,
+  RiArrowDownSLine,
+  RiArrowUpSLine,
 } from "oh-vue-icons/icons";
 
 addIcons(
+  RiArrowLeftLine,
+  RiArrowDownSLine,
+  RiArrowUpSLine,
+  RiImageLine,
+  RiToggleLine,
+  RiQuestionLine,
   RiClipboardLine,
   RiMedicineBottleLine,
   RiDoorOpenLine,
@@ -74,7 +87,8 @@ addIcons(
   BiRadioactive,
   RiFacebookFill,
   RiTwitterFill,
-  RiLinkedinFill
+  RiLinkedinFill,
+  RiSettingsLine
 );
 
 const app = createApp(App);

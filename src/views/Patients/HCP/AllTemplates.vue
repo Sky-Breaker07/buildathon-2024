@@ -7,7 +7,7 @@
 				v-for="template in templates"
 				:key="template.name"
 				:template="template"
-				@click="navigateTo(template.route)"
+				@click="navigateTo(template.type)"
 			/>
 		</div>
 	</div>
@@ -25,36 +25,36 @@
 			name: 'Assessment Templates',
 			description: 'Manage and create assessment templates',
 			icon: 'ri-clipboard-line',
-			route: 'AssessmentTemplate',
+			type: 'assessment',
 		},
 		{
 			name: 'Treatment Templates',
 			description: 'Manage and create treatment templates',
 			icon: 'ri-medicine-bottle-line',
-			route: 'TreatmentTemplate',
+			type: 'treatment',
 		},
 		{
 			name: 'Discharge Templates',
 			description: 'Manage and create discharge templates',
 			icon: 'ri-door-open-line',
-			route: 'DischargeTemplate',
+			type: 'discharge',
 		},
 		{
 			name: 'Evaluation Templates',
 			description: 'Manage and create evaluation templates',
 			icon: 'ri-file-text-line',
-			route: 'EvaluationTemplate',
+			type: 'evaluation',
 		},
 		{
 			name: 'Referral Templates',
 			description: 'Manage and create referral templates',
 			icon: 'ri-arrow-right-line',
-			route: 'ReferralTemplate',
+			type: 'referral',
 		},
 	]);
 
-	const navigateTo = (route) => {
-		router.push({ name: route });
+	const navigateTo = (type) => {
+		router.push({ name: 'Templates', params: { type } });
 	};
 </script>
 

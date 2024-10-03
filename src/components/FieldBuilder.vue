@@ -3,7 +3,7 @@
     <div class="flex justify-between items-center">
       <select 
         :value="field.type" 
-        @input="updateField('type', $event.target.value)" 
+        @input="handleTypeChange($event.target.value)" 
         class="p-2 border-2 border-indigo-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition-all duration-300"
       >
         <option v-for="type in fieldTypes" :key="type.value" :value="type.value">{{ type.label }}</option>
@@ -38,7 +38,25 @@
       </label>
     </div>
     
-    <div class="relative" v-if="field.type !== 'Boolean'">
+    <div v-if="field.type === 'String'" class="flex items-center mt-2">
+      <input 
+        type="checkbox" 
+        :checked="field.isImage" 
+        @change="updateField('isImage', $event.target.checked)" 
+        class="mr-2 h-5 w-5 text-indigo-600 focus:ring-indigo-500 border-gray-300 rounded"
+      />
+      <label class="text-gray-700 flex items-center">
+        <v-icon name="ri-image-line" class="mr-1" />
+        Image Upload Field
+      </label>
+    </div>
+
+    <div v-if="field.type === 'String' && field.isImage" class="space-y-2 mt-2">
+      <p class="text-sm font-medium text-gray-700">Image Upload Field</p>
+      <p class="text-xs text-gray-500">This field will allow image uploads up to 5MB during assessment.</p>
+    </div>
+
+    <div class="relative" v-if="field.type !== 'Boolean' && !field.isImage">
       <input 
         :value="field.placeholder" 
         @input="updateField('placeholder', $event.target.value)" 
@@ -68,7 +86,7 @@
       </button>
     </div>
     
-    <div class="relative" v-if="field.type !== 'Boolean' && field.type !== 'Array'">
+    <div class="relative" v-if="field.type !== 'Boolean' && field.type !== 'Array' && !field.isImage">
       <input 
         :value="field.defaultValue" 
         @input="updateField('defaultValue', $event.target.value)" 
@@ -110,6 +128,28 @@ const fieldTypes = ref([
   { value: 'Array', label: 'Multiple Choice' },
   { value: 'Date', label: 'Date' }
 ]);
+
+const handleTypeChange = (value) => {
+  const updatedField = { ...props.field, type: value };
+  
+  if (value !== 'String') {
+    updatedField.isImage = false;
+  }
+  
+  // Reset field-specific properties when changing types
+  if (value !== 'Array') {
+    updatedField.options = [];
+  }
+  
+  if (value === 'Boolean') {
+    updatedField.defaultValue = '';
+    updatedField.placeholder = '';
+  } else if (value === 'Date') {
+    updatedField.defaultValue = '';
+  }
+  
+  emit('update:field', updatedField);
+};
 
 const updateField = (key, value) => {
   emit('update:field', { ...props.field, [key]: value });

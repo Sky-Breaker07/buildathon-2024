@@ -5,6 +5,8 @@ import ProtectedLayout from '../layouts/ProtectedLayout.vue';
 import RegisterPatient from '@/views/Patients/Him/RegisterPatient.vue';
 import AllPatients from '@/views/Patients/Him/AllPatients.vue';
 import AllTemplates from '@/views/Patients/HCP/AllTemplates.vue';
+import ManageTemplates from '@/views/Patients/HCP/ManageTemplates.vue';
+import EditTemplates from '@/views/Patients/HCP/EditTemplates.vue';
 
 const routes = [
 	{
@@ -182,9 +184,9 @@ const routes = [
 		},
 	},
 	{
-		path: '/dashboard/templates/assessment-templates',
-		name: 'AssessmentTemplate',
-		component: () => import('@/views/Patients/HCP/AssessmentTemplate.vue'),
+		path: '/dashboard/templates/:type',
+		name: 'Templates',
+		component: () => import('@/views/Patients/HCP/TemplatePages.vue'),
 		meta: {
 			requiresAuth: true,
 			requiresAdminHCP: true,
@@ -192,39 +194,9 @@ const routes = [
 		},
 	},
 	{
-		path: '/dashboard/templates/treatment-templates',
-		name: 'TreatmentTemplate',
-		component: () => import('@/views/Patients/HCP/TreatmentTemplate.vue'),
-		meta: {
-			requiresAuth: true,
-			requiresAdminHCP: true,
-			layout: ProtectedLayout,
-		},
-	},
-	{
-		path: '/dashboard/templates/discharge-templates',
-		name: 'DischargeTemplate',
-		component: () => import('@/views/Patients/HCP/DischargeTemplate.vue'),
-		meta: {
-			requiresAuth: true,
-			requiresAdminHCP: true,
-			layout: ProtectedLayout,
-		},
-	},
-	{
-		path: '/dashboard/templates/evaluation-templates',
-		name: 'EvaluationTemplate',
-		component: () => import('@/views/Patients/HCP/EvaluationTemplate.vue'),
-		meta: {
-			requiresAuth: true,
-			requiresAdminHCP: true,
-			layout: ProtectedLayout,
-		},
-	},
-	{
-		path: '/dashboard/templates/referral-templates',
-		name: 'ReferralTemplate',
-		component: () => import('@/views/Patients/HCP/ReferralTemplate.vue'),
+		path: '/dashboard/manage-templates/:type',
+		name: 'ManageTemplates',
+		component: ManageTemplates,
 		meta: {
 			requiresAuth: true,
 			requiresAdminHCP: true,
@@ -254,6 +226,16 @@ const routes = [
 		path: '/:pathMatch(.*)*',
 		name: 'notFound',
 		component: () => import('@/views/NotFound.vue'),
+	},
+	{
+		path: '/dashboard/edit-templates/:type/:id',
+		name: 'EditTemplates',
+		component: EditTemplates,
+		meta: {
+			requiresAuth: true,
+			requiresAdminHCP: true,
+			layout: ProtectedLayout,
+		},
 	},
 ];
 

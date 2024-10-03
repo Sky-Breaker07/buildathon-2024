@@ -3,33 +3,40 @@
 		v-if="currentUser"
 		class="w-[90rem] mx-auto p-8 pt-4 bg-white rounded-lg font-poppins"
 	>
-		<BackButton class="py-4" />
+		<div class="flex justify-between items-center mb-8">
+			<BackButton class="py-4" />
+			<a
+				@click="navigateToManageTemplates"
+				class="text-indigo-600 hover:text-indigo-800 transition-colors duration-300 flex items-center cursor-pointer"
+			>
+				<i class="fas fa-list-ul mr-2"></i> Manage Existing Templates
+			</a>
+		</div>
 		<h1
 			class="text-4xl font-bold mb-8 text-indigo-700 border-b-2 border-indigo-200 pb-4"
 		>
-			Assessment Template Builder
+			Edit {{ capitalizeTemplateType }} Template
 		</h1>
 
 		<div
 			class="mb-8 bg-blue-50 border-l-4 border-blue-500 p-4 rounded-md shadow-md"
 		>
 			<h3 class="text-lg font-semibold text-blue-700 mb-2">
-				How to Use This Builder
+				How to Edit This Template
 			</h3>
 			<ul class="list-disc list-inside text-blue-600 space-y-2">
-				<li>Start by giving your template a name and description.</li>
-				<li>Add sections to organize your assessment.</li>
+				<li>Modify the template name and description if needed.</li>
+				<li>Edit existing sections or add new ones to reorganize your assessment.</li>
 				<li>
-					Within each section, add fields to collect specific
+					Within each section, modify existing fields or add new ones to collect specific
 					information.
 				</li>
 				<li>
-					You can preview your template at any time using the "Preview
+					You can preview your changes at any time using the "Preview
 					Template" button.
 				</li>
 				<li>
-					Once you're satisfied, click "Save Template" to finalize
-					your work.
+					Once you're satisfied with your changes, click "Update Template" to save your work.
 				</li>
 			</ul>
 		</div>
@@ -137,7 +144,7 @@
 				@click="saveTemplate"
 				class="px-6 py-3 bg-indigo-500 text-white rounded-lg hover:bg-indigo-600 transition-colors duration-300 flex items-center"
 			>
-				<i class="fas fa-save mr-2"></i> Save Template
+				<i class="fas fa-save mr-2"></i> Update Template
 			</button>
 		</div>
 	</div>
@@ -188,12 +195,22 @@
 							<p class="font-medium">{{ field.label }}</p>
 							<div class="mt-1">
 								<input
-									v-if="field.type === 'String'"
+									v-if="field.type === 'String' && !field.isImage"
 									type="text"
 									class="w-full p-2 border rounded"
 									:placeholder="field.placeholder"
 									disabled
 								/>
+								<div v-else-if="field.type === 'String' && field.isImage" class="mt-1">
+									<p class="text-sm text-gray-500">Image upload field</p>
+									<div class="mt-1 flex items-center">
+										<span class="inline-block h-12 w-12 rounded-full overflow-hidden bg-gray-100">
+											<svg class="h-full w-full text-gray-300" fill="currentColor" viewBox="0 0 24 24">
+												<path d="M24 20.993V24H0v-2.996A14.977 14.977 0 0112.004 15c4.904 0 9.26 2.354 11.996 5.993zM16.002 8.999a4 4 0 11-8 0 4 4 0 018 0z" />
+											</svg>
+										</span>
+									</div>
+								</div>
 								<input
 									v-else-if="field.type === 'Number'"
 									type="number"
@@ -248,19 +265,42 @@
 
 <script setup>
 	import { ref, computed, onMounted } from 'vue';
-	import { useRouter } from 'vue-router';
+	import { useRouter, useRoute } from 'vue-router';
 	import { useToast } from 'vue-toastification';
-	import { useAssessmentTemplateStore } from '@/stores/assessment-template';
-	import { createAssessmentTemplate } from '@/utils/assessmentTemplate';
-	import FieldBuilder from '../../../components/FieldBuilder.vue';
 	import { useStaffStore } from '@/stores/staff-management';
 	import LoadingModal from '../../../components/LoadingModal.vue';
 	import BackButton from '../../../components/BackButton.vue';
+	import FieldBuilder from '../../../components/FieldBuilder.vue';
+
+	// Import all template stores
+	import { useAssessmentTemplateStore } from '@/stores/assessment-template';
+	import { useTreatmentTemplateStore } from '@/stores/treatment-template';
+	import { useDischargeTemplateStore } from '@/stores/discharge-template';
+	import { useEvaluationTemplateStore } from '@/stores/evaluation-template';
+	import { useReferralTemplateStore } from '@/stores/referral-template';
+
+	// Import the consolidated template utility functions
+	import { updateTemplate, getTemplateById } from '@/utils/template';
+
 	const router = useRouter();
+	const route = useRoute();
 	const toast = useToast();
-	const assessmentTemplateStore = useAssessmentTemplateStore();
 	const staffStore = useStaffStore();
 	const loadingModal = ref(null);
+
+	const templateType = computed(() => route.params.type);
+	const templateId = computed(() => route.params.id);
+
+	const templateStore = computed(() => {
+		switch (templateType.value) {
+			case 'assessment': return useAssessmentTemplateStore();
+			case 'treatment': return useTreatmentTemplateStore();
+			case 'discharge': return useDischargeTemplateStore();
+			case 'evaluation': return useEvaluationTemplateStore();
+			case 'referral': return useReferralTemplateStore();
+			default: throw new Error(`Invalid template type: ${templateType.value}`);
+		}
+	});
 
 	const templateName = ref('');
 	const description = ref('');
@@ -270,18 +310,25 @@
 
 	onMounted(async () => {
 		if (!currentUser.value) {
-			await fetchCurrentUser();
+			await staffStore.fetchCurrentUser();
 		}
+		await fetchTemplate();
 	});
 
-	const fetchCurrentUser = async () => {
+	const fetchTemplate = async () => {
 		try {
 			loadingModal.value.show();
-			await staffStore.fetchCurrentUser();
+			const response = await getTemplateById(templateType.value, templateId.value);
+			const template = response.data;
+			templateName.value = template.name;
+			description.value = template.description;
+			sections.value = Object.entries(template.fields).map(([name, fields]) => ({
+				name,
+				fields
+			}));
 		} catch (error) {
-			console.error('Error fetching current user:', error);
-			toast.error('Failed to fetch user data. Please try again.');
-			router.push('/login');
+			console.error('Error fetching template:', error);
+			toast.error('Failed to fetch template data. Please try again.');
 		} finally {
 			loadingModal.value.hide();
 		}
@@ -306,6 +353,7 @@
 			placeholder: '',
 			options: [],
 			defaultValue: '',
+			isImage: false,
 		};
 	};
 
@@ -334,14 +382,14 @@
 				description: description.value,
 				fields: processedFields.value,
 			};
-			console.log(templateData);
-			const response = await createAssessmentTemplate(templateData);
-			assessmentTemplateStore.addTemplate(response.data);
+			const response = await updateTemplate(templateType.value, templateId.value, templateData);
+			templateStore.value.updateTemplate(response.data);
 
-			toast.success('Template saved successfully!');
+			toast.success('Template updated successfully!');
+			router.push({ name: 'ManageTemplates', params: { type: templateType.value } });
 		} catch (error) {
-			console.error('Error saving template:', error);
-			toast.error('Error saving template. Please try again.');
+			console.error('Error updating template:', error);
+			toast.error('Error updating template. Please try again.');
 		} finally {
 			loadingModal.value.hide();
 		}
@@ -356,4 +404,12 @@
 	const closePreviewModal = () => {
 		showPreviewModal.value = false;
 	};
+
+	const navigateToManageTemplates = () => {
+		router.push({ name: 'ManageTemplates', params: { type: templateType.value } });
+	};
+
+	const capitalizeTemplateType = computed(() => {
+		return templateType.value.charAt(0).toUpperCase() + templateType.value.slice(1);
+	});
 </script>

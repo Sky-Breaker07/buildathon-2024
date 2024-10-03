@@ -13,13 +13,13 @@
 		</div>
 		<h2 class="template-card__title">{{ template.name }}</h2>
 		<p class="template-card__description">{{ template.description }}</p>
-		<v-btn
-			class="template-card__button"
-			color="primary"
+		<button
+			class="template-card__button bg-blue-500 hover:bg-blue-600 text-white font-bold py-2 px-4 rounded inline-flex items-center"
 			@click="$emit('click')"
 		>
+			<v-icon name="ri-settings-line" class="mr-2" />
 			Manage Templates
-		</v-btn>
+		</button>
 	</div>
 </template>
 
@@ -39,42 +39,26 @@
 
 <style scoped>
 	.template-card {
-		background-color: #ffffff;
-		border-radius: 12px;
-		box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-		padding: 2rem;
-		display: flex;
-		flex-direction: column;
-		align-items: center;
-		text-align: center;
-		cursor: pointer;
-		transition: all 0.3s ease;
+		@apply bg-white rounded-lg shadow-md p-8 flex flex-col items-center text-center cursor-pointer transition-all duration-300 ease-in-out;
 	}
 
 	.template-card--hover {
-		transform: translateY(-5px);
-		box-shadow: 0 8px 12px rgba(0, 0, 0, 0.15);
+		@apply transform -translate-y-1 shadow-lg;
 	}
 
 	.template-card__icon {
-		margin-bottom: 1rem;
-		color: #3498db;
+		@apply mb-4 text-blue-500;
 	}
 
 	.template-card__title {
-		font-size: 1.3rem;
-		font-weight: 600;
-		color: #2c3e50;
-		margin-bottom: 0.75rem;
+		@apply text-xl font-semibold text-gray-800 mb-3;
 	}
 
 	.template-card__description {
-		font-size: 1rem;
-		color: #7f8c8d;
-		margin-bottom: 1.5rem;
+		@apply text-base text-gray-600 mb-6;
 	}
 
 	.template-card__button {
-		margin-top: auto;
+		@apply mt-auto;
 	}
 </style>

@@ -3,11 +3,19 @@
 		v-if="currentUser"
 		class="w-[90rem] mx-auto p-8 pt-4 bg-white rounded-lg font-poppins"
 	>
-		<BackButton class="py-4" />
+		<div class="flex justify-between items-center mb-8">
+			<BackButton class="py-4" />
+			<a
+				@click="navigateToManageTemplates"
+				class="text-indigo-600 hover:text-indigo-800 transition-colors duration-300 flex items-center cursor-pointer"
+			>
+				<i class="fas fa-list-ul mr-2"></i> Manage Existing Templates
+			</a>
+		</div>
 		<h1
 			class="text-4xl font-bold mb-8 text-indigo-700 border-b-2 border-indigo-200 pb-4"
 		>
-			Discharge Template Builder
+			{{ capitalizeTemplateType }} Template Builder
 		</h1>
 
 		<div
@@ -18,7 +26,7 @@
 			</h3>
 			<ul class="list-disc list-inside text-blue-600 space-y-2">
 				<li>Start by giving your template a name and description.</li>
-				<li>Add sections to organize your discharge.</li>
+				<li>Add sections to organize your assessment.</li>
 				<li>
 					Within each section, add fields to collect specific
 					information.
@@ -61,7 +69,7 @@
 			<div class="relative">
 				<textarea
 					v-model="description"
-					class="w-full p-3 border-2 border-indigo-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition-all duration-300 pl-10"
+					class="w-full min-h-[8rem] p-3 border-2 border-indigo-300 rounded-lg resize-none transition-all duration-300 pl-10"
 					placeholder="Description"
 					rows="3"
 				></textarea>
@@ -188,12 +196,22 @@
 							<p class="font-medium">{{ field.label }}</p>
 							<div class="mt-1">
 								<input
-									v-if="field.type === 'String'"
+									v-if="field.type === 'String' && !field.isImage"
 									type="text"
 									class="w-full p-2 border rounded"
 									:placeholder="field.placeholder"
 									disabled
 								/>
+								<div v-else-if="field.type === 'String' && field.isImage" class="mt-1">
+									<p class="text-sm text-gray-500">Image upload field</p>
+									<div class="mt-1 flex items-center">
+										<span class="inline-block h-12 w-12 rounded-full overflow-hidden bg-gray-100">
+											<svg class="h-full w-full text-gray-300" fill="currentColor" viewBox="0 0 24 24">
+												<path d="M24 20.993V24H0v-2.996A14.977 14.977 0 0112.004 15c4.904 0 9.26 2.354 11.996 5.993zM16.002 8.999a4 4 0 11-8 0 4 4 0 018 0z" />
+											</svg>
+										</span>
+									</div>
+								</div>
 								<input
 									v-else-if="field.type === 'Number'"
 									type="number"
@@ -248,19 +266,41 @@
 
 <script setup>
 	import { ref, computed, onMounted } from 'vue';
-	import { useRouter } from 'vue-router';
+	import { useRouter, useRoute } from 'vue-router';
 	import { useToast } from 'vue-toastification';
-	import { useDischargeTemplateStore } from '@/stores/discharge-template';
-	import { createDischargeTemplate } from '@/utils/dischargeTemplate';
-	import FieldBuilder from '../../../components/FieldBuilder.vue';
 	import { useStaffStore } from '@/stores/staff-management';
 	import LoadingModal from '../../../components/LoadingModal.vue';
 	import BackButton from '../../../components/BackButton.vue';
+	import FieldBuilder from '../../../components/FieldBuilder.vue';
+
+	// Import all template stores
+	import { useAssessmentTemplateStore } from '@/stores/assessment-template';
+	import { useTreatmentTemplateStore } from '@/stores/treatment-template';
+	import { useDischargeTemplateStore } from '@/stores/discharge-template';
+	import { useEvaluationTemplateStore } from '@/stores/evaluation-template';
+	import { useReferralTemplateStore } from '@/stores/referral-template';
+
+	// Import the consolidated template utility functions
+	import { createTemplate } from '@/utils/template';
+
 	const router = useRouter();
+	const route = useRoute();
 	const toast = useToast();
-	const dischargeTemplateStore = useDischargeTemplateStore();
 	const staffStore = useStaffStore();
 	const loadingModal = ref(null);
+
+	const templateType = computed(() => route.params.type);
+
+	const templateStore = computed(() => {
+		switch (templateType.value) {
+			case 'assessment': return useAssessmentTemplateStore();
+			case 'treatment': return useTreatmentTemplateStore();
+			case 'discharge': return useDischargeTemplateStore();
+			case 'evaluation': return useEvaluationTemplateStore();
+			case 'referral': return useReferralTemplateStore();
+			default: throw new Error(`Invalid template type: ${templateType.value}`);
+		}
+	});
 
 	const templateName = ref('');
 	const description = ref('');
@@ -306,6 +346,7 @@
 			placeholder: '',
 			options: [],
 			defaultValue: '',
+			isImage: false,
 		};
 	};
 
@@ -335,8 +376,8 @@
 				fields: processedFields.value,
 			};
 			console.log(templateData);
-			const response = await createDischargeTemplate(templateData);
-			dischargeTemplateStore.addTemplate(response.data);
+			const response = await createTemplate(templateType.value, templateData);
+			templateStore.value.addTemplate(response.data);
 
 			toast.success('Template saved successfully!');
 		} catch (error) {
@@ -356,4 +397,13 @@
 	const closePreviewModal = () => {
 		showPreviewModal.value = false;
 	};
+
+	const navigateToManageTemplates = () => {
+		router.push({ name: 'ManageTemplates', params: { type: templateType.value } });
+	};
+
+	// capitalize the first letter of the template type
+	const capitalizeTemplateType = computed(() => {
+		return templateType.value.charAt(0).toUpperCase() + templateType.value.slice(1);
+	});
 </script>
