@@ -132,8 +132,8 @@
 						</option>
 					</select>
 					<p class="text-sm text-gray-600 italic">
-						Note: The staff ID will be generated automatically and
-						used as the username.
+						Note: The <b>staff ID</b> will be generated
+						automatically and used as the <b>username</b>.
 					</p>
 					<button
 						type="submit"
@@ -177,8 +177,8 @@
 						placeholder="Email"
 					/>
 					<p class="text-sm text-gray-600 italic">
-						Note: The staff ID will be generated automatically and
-						used as the username.
+						Note: The <b>staff ID</b> will be generated
+						automatically and used as the <b>username</b>.
 					</p>
 					<button
 						type="submit"
