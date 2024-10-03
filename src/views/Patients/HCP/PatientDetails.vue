@@ -285,78 +285,6 @@
 				</p>
 			</section>
 
-			<!-- Assessments, Treatments, Discharges, Referrals and Evaluations Sections -->
-			<div class="grid grid-cols-1 md:grid-cols-2 gap-8">
-				<template
-					v-for="(section, index) in [
-						'assessments',
-						'treatments',
-						'discharges',
-						'evaluations',
-						'referrals',
-					]"
-					:key="index"
-				>
-					<section
-						class="bg-white shadow-lg rounded-lg p-6 transform hover:scale-105 transition-transform duration-300"
-					>
-						<h2
-							class="text-3xl font-semibold mb-4 text-indigo-800 capitalize"
-						>
-							{{ section }}
-						</h2>
-						<div
-							v-if="patient[section].length > 0"
-							class="space-y-4"
-						>
-							<div
-								v-for="item in patient[section]"
-								:key="item._id"
-								class="border-b pb-4"
-							>
-								<h3
-									class="text-xl font-semibold mb-2 text-indigo-600"
-								>
-									{{ item.template.name }}
-								</h3>
-								<div
-									v-for="(value, key) in item[
-										`${section.slice(0, -1)}_data`
-									]"
-									:key="key"
-									class="mb-2"
-								>
-									<span
-										class="font-semibold capitalize text-gray-600"
-										>{{ formatKey(key) }}:</span
-									>
-									<span class="text-gray-800">{{
-										value
-									}}</span>
-								</div>
-								<div
-									class="mt-2 text-sm text-gray-500 text-right"
-								>
-									{{
-										capitalizeFirstLetter(
-											section.slice(0, -1)
-										)
-									}}
-									on:
-									{{ formatDate(item.createdAt) }}
-								</div>
-							</div>
-						</div>
-						<p
-							v-else
-							class="text-gray-500 text-center text-lg"
-						>
-							No {{ section }} recorded.
-						</p>
-					</section>
-				</template>
-			</div>
-
 			<!-- Transfer Patient Section -->
 			<section
 				class="bg-white shadow-lg rounded-lg p-6 transform hover:scale-105 transition-transform duration-300"
@@ -571,10 +499,6 @@
 			default:
 				return 'bg-gray-200 text-gray-800';
 		}
-	};
-
-	const capitalizeFirstLetter = (string) => {
-		return string.charAt(0).toUpperCase() + string.slice(1);
 	};
 
 	const filteredBiodata = computed(() => {
