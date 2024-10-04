@@ -455,7 +455,7 @@ const updateHospitalRecord = async () => {
     console.error("Error updating hospital record:", error);
     toast.error("Error updating hospital record");
   } finally {
-	loadingModal.value.show()
+	loadingModal.value.hide()
   }
 };
 
