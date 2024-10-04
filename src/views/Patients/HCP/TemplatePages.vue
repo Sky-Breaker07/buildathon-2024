@@ -48,6 +48,7 @@
 					v-model="templateName"
 					class="w-full p-3 border-2 border-indigo-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition-all duration-300 pl-10"
 					placeholder="Template Name"
+					required
 				/>
 				<span class="absolute left-3 top-3 text-indigo-500">
 					<i class="fas fa-file-alt"></i>
@@ -90,6 +91,7 @@
 						v-model="section.name"
 						class="text-xl font-semibold bg-transparent border-b-2 border-indigo-300 focus:border-indigo-500 transition-all duration-300"
 						placeholder="Section Name"
+						required
 					/>
 					<button
 						@click="removeSection(sectionIndex)"
@@ -196,18 +198,36 @@
 							<p class="font-medium">{{ field.label }}</p>
 							<div class="mt-1">
 								<input
-									v-if="field.type === 'String' && !field.isImage"
+									v-if="
+										field.type === 'String' &&
+										!field.isImage
+									"
 									type="text"
 									class="w-full p-2 border rounded"
 									:placeholder="field.placeholder"
 									disabled
 								/>
-								<div v-else-if="field.type === 'String' && field.isImage" class="mt-1">
-									<p class="text-sm text-gray-500">Image upload field</p>
+								<div
+									v-else-if="
+										field.type === 'String' && field.isImage
+									"
+									class="mt-1"
+								>
+									<p class="text-sm text-gray-500">
+										Image upload field
+									</p>
 									<div class="mt-1 flex items-center">
-										<span class="inline-block h-12 w-12 rounded-full overflow-hidden bg-gray-100">
-											<svg class="h-full w-full text-gray-300" fill="currentColor" viewBox="0 0 24 24">
-												<path d="M24 20.993V24H0v-2.996A14.977 14.977 0 0112.004 15c4.904 0 9.26 2.354 11.996 5.993zM16.002 8.999a4 4 0 11-8 0 4 4 0 018 0z" />
+										<span
+											class="inline-block h-12 w-12 rounded-full overflow-hidden bg-gray-100"
+										>
+											<svg
+												class="h-full w-full text-gray-300"
+												fill="currentColor"
+												viewBox="0 0 24 24"
+											>
+												<path
+													d="M24 20.993V24H0v-2.996A14.977 14.977 0 0112.004 15c4.904 0 9.26 2.354 11.996 5.993zM16.002 8.999a4 4 0 11-8 0 4 4 0 018 0z"
+												/>
 											</svg>
 										</span>
 									</div>
@@ -293,12 +313,18 @@
 
 	const templateStore = computed(() => {
 		switch (templateType.value) {
-			case 'assessment': return useAssessmentTemplateStore();
-			case 'treatment': return useTreatmentTemplateStore();
-			case 'discharge': return useDischargeTemplateStore();
-			case 'evaluation': return useEvaluationTemplateStore();
-			case 'referral': return useReferralTemplateStore();
-			default: throw new Error(`Invalid template type: ${templateType.value}`);
+			case 'assessment':
+				return useAssessmentTemplateStore();
+			case 'treatment':
+				return useTreatmentTemplateStore();
+			case 'discharge':
+				return useDischargeTemplateStore();
+			case 'evaluation':
+				return useEvaluationTemplateStore();
+			case 'referral':
+				return useReferralTemplateStore();
+			default:
+				throw new Error(`Invalid template type: ${templateType.value}`);
 		}
 	});
 
@@ -376,7 +402,10 @@
 				fields: processedFields.value,
 			};
 			console.log(templateData);
-			const response = await createTemplate(templateType.value, templateData);
+			const response = await createTemplate(
+				templateType.value,
+				templateData
+			);
 			templateStore.value.addTemplate(response.data);
 
 			toast.success('Template saved successfully!');
@@ -399,11 +428,17 @@
 	};
 
 	const navigateToManageTemplates = () => {
-		router.push({ name: 'ManageTemplates', params: { type: templateType.value } });
+		router.push({
+			name: 'ManageTemplates',
+			params: { type: templateType.value },
+		});
 	};
 
 	// capitalize the first letter of the template type
 	const capitalizeTemplateType = computed(() => {
-		return templateType.value.charAt(0).toUpperCase() + templateType.value.slice(1);
+		return (
+			templateType.value.charAt(0).toUpperCase() +
+			templateType.value.slice(1)
+		);
 	});
 </script>
