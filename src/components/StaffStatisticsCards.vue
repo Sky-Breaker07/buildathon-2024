@@ -157,7 +157,11 @@
 			category === 'healthCareProfessionals' &&
 			subCategory !== 'admins'
 		) {
-			return subCategory;
+			return 'Healthcare Professionals';
+		} else if (category === 'healthCareProfessionals' && subCategory === 'admins') {
+			return 'Head of Healthcare Professionals';
+		} else if (category === 'healthInfoManagers') {
+			return 'Health Information Managers';
 		} else {
 			return role
 				.split('.')
