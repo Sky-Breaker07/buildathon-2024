@@ -16,7 +16,7 @@
 		const warmingUp = await warmUp();
 
 		if (warmingUp) {
-			console.log(warmingUp.message);
+			warmingUp.message;
 		}
 	});
 

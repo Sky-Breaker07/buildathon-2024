@@ -223,7 +223,7 @@
 	const router = useRouter();
 
 	const navigateToRegister = () => {
-		router.push('/dashboard');
+		router.push('/register');
 	};
 
 	const date = computed(() => new Date().getFullYear());

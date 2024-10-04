@@ -310,14 +310,11 @@
 
 			const response = await registerSuperAdmin(superAdminData);
 
-			console.log('Server response:', response);
-			console.log('Response data:', response.data);
-			console.log('SuperAdmin data:', response.data?.data?.superAdmin);
-			console.log(
-				'Organization data:',
-				response.data?.data?.organization
-			);
-			console.log('Token:', response.data?.data?.token);
+			'Server response:', response;
+			'Response data:', response.data;
+			'SuperAdmin data:', response.data?.data?.superAdmin;
+			'Organization data:', response.data?.data?.organization;
+			'Token:', response.data?.data?.token;
 
 			if (
 				response.data?.status === 'Success' &&
