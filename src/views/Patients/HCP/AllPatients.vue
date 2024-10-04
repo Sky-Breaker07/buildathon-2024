@@ -368,7 +368,7 @@
 			loadingModal.value.show();
 			const token = getToken();
 			const response = await getAdminJurisdictionPatients(token);
-			console.log(response.data);
+			response.data;
 			patientStore.setAllPatients(response.data.data);
 		} catch (error) {
 			console.error('Error fetching patients:', error);

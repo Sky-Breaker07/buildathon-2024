@@ -401,7 +401,7 @@
 				description: description.value,
 				fields: processedFields.value,
 			};
-			console.log(templateData);
+			templateData;
 			const response = await createTemplate(
 				templateType.value,
 				templateData
