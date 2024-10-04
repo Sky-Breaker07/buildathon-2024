@@ -26,7 +26,7 @@
 		<DashboardCard
 			v-if="staffStats.counts.healthCareProfessionals.admins > 0"
 			icon="user-md"
-			title="Healthcare Professional Admins"
+			title="Head of Healthcare Professionals"
 			:subtitle="`${
 				staffStats.counts.healthCareProfessionals.admins
 			} staff member${
