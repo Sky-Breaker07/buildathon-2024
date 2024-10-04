@@ -181,7 +181,7 @@
 		{ value: 'String', label: 'Short Text' },
 		{ value: 'Number', label: 'Number' },
 		{ value: 'Boolean', label: 'True/False' },
-		{ value: 'Array', label: 'Multiple Choice' },
+		{ value: 'Array', label: 'Options' },
 		{ value: 'Date', label: 'Date' },
 	]);
 
